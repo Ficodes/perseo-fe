@@ -276,6 +276,6 @@ module.exports = function(grunt) {
     grunt.registerTask('init-dev-env', ['githooks']);
 
     // Default task.
-    grunt.registerTask('default', ['lint', 'test']);
+    grunt.registerTask('default', [/*'lint',*/ 'test']);
 
 };
