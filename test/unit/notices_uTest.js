@@ -5,20 +5,20 @@ var should = require('should'),
     testEnv = require('../utils/testEnvironment');
 
 var noticeExample = {
-    "subscriptionId": "5b311ccb29adb333f843b5f3",
-    "data": [
+    'subscriptionId': '5b311ccb29adb333f843b5f3',
+    'data': [
         {
-            "id": "sensor-1",
-            "type": "tipeExample1",
-            "Attr1": {
-                "type": "Number",
-                "value": 122,
-                "metadata": {}
+            'id': 'sensor-1',
+            'type': 'tipeExample1',
+            'Attr1': {
+                'type': 'Number',
+                'value': 122,
+                'metadata': {}
             }
         }
     ],
-    "subservice": "/test/notices/unit",
-    "service": "utest"
+    'subservice': '/test/notices/unit',
+    'service': 'utest'
 };
 
 describe('Notices', function() {
@@ -33,7 +33,7 @@ describe('Notices', function() {
                 request.should.not.be.instanceof(Error);
                 should.equal(request.length, 1);
                 should.equal(request[0].code, 200);
-                should.equal(request[0].body, "All right again!");
+                should.equal(request[0].body, 'All right again!');
             };
             notices.Do(noticeExample, callback);
         });
@@ -44,16 +44,16 @@ describe('Notices', function() {
                 request.should.not.be.instanceof(Error);
                 should.equal(request.length, 1);
                 should.equal(request[0].code, 200);
-                should.equal(request[0].body, "All right again!");
+                should.equal(request[0].body, 'All right again!');
             };
             noticeExample.data = [
                 {
-                    "id": "sensor-1",
-                    "type": "tipeExample1",
-                    "Attr1": {
-                        "type": "DataTime",
-                        "value": "2018-06-03T09:31:26.296Z",
-                        "metadata": {}
+                    'id': 'sensor-1',
+                    'type': 'tipeExample1',
+                    'Attr1': {
+                        'type': 'DataTime',
+                        'value': '2018-06-03T09:31:26.296Z',
+                        'metadata': {}
                     }
                 }
             ];
@@ -66,16 +66,16 @@ describe('Notices', function() {
                 request.should.not.be.instanceof(Error);
                 should.equal(request.length, 1);
                 should.equal(request[0].code, 200);
-                should.equal(request[0].body, "All right again!");
+                should.equal(request[0].body, 'All right again!');
             };
             noticeExample.data = [
                 {
-                    "id": "sensor-1",
-                    "type": "tipeExample1",
-                    "Attr1": {
-                        "type": "geo:point",
-                        "value": "[666,11]",
-                        "metadata": {}
+                    'id': 'sensor-1',
+                    'type': 'tipeExample1',
+                    'Attr1': {
+                        'type': 'geo:point',
+                        'value': '40.418889, -3.691944',
+                        'metadata': {}
                     }
                 }
             ];
@@ -88,11 +88,11 @@ describe('Notices', function() {
                 request.should.not.be.instanceof(Error);
                 should.equal(request.length, 1);
                 should.equal(request[0].code, 200);
-                should.equal(request[0].body, "All right again!");
+                should.equal(request[0].body, 'All right again!');
             };
             noticeExample.data[0].Attr1.metadata = {
-                "metaAtt": {
-                    "value": "attMetaEXtra"
+                'metaAtt': {
+                    'value': 'attMetaEXtra'
                 }
             };
             notices.Do(noticeExample, callback);
@@ -104,12 +104,12 @@ describe('Notices', function() {
                 request.should.not.be.instanceof(Error);
                 should.equal(request.length, 1);
                 should.equal(request[0].code, 200);
-                should.equal(request[0].body, "All right again!");
+                should.equal(request[0].body, 'All right again!');
             };
             noticeExample.data[0].Attr1.metadata = {
-                "location": {
-                    "value": "[123,456]",
-                    "type": "geo:point"
+                'location': {
+                    'value': '[123,456]',
+                    'type': 'geo:point'
                 }
             };
             notices.Do(noticeExample, callback);
@@ -121,12 +121,12 @@ describe('Notices', function() {
                 request.should.not.be.instanceof(Error);
                 should.equal(request.length, 1);
                 should.equal(request[0].code, 200);
-                should.equal(request[0].body, "All right again!");
+                should.equal(request[0].body, 'All right again!');
             };
             noticeExample.data[0].Attr1.metadata = {
-                "aMomment": {
-                    "value": "2018-06-03T09:31:26.296Z",
-                    "type": "DateTime"
+                'aMomment': {
+                    'value': '2018-06-03T09:31:26.296Z',
+                    'type': 'DateTime'
                 }
             };
             notices.Do(noticeExample, callback);
