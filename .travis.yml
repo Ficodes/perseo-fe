@@ -10,6 +10,7 @@ branches:
   only:
     - master
     - update/dependencies
+    - feature/NGSIv2
 
 services:
  - mongodb
