@@ -25,7 +25,7 @@ services:
             restart_policy:
                 condition: on-failure
     perseo-fe:
-        image: fiware/perseo-fe
+        image: fiware/perseo
         networks:
             perseo:
             main:
