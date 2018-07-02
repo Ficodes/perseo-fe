@@ -9,7 +9,7 @@ node_js:
 branches:
   only:
     - master
-    - feature/docker-compose
+    - update/dependencies
 
 services:
  - mongodb
