@@ -41,6 +41,24 @@ process.on('uncaughtException', function(ex){
     });
 });
 
+/*
+ * Normalize env var and return the value
+ */
+function getNormalizedBoolVar(envar, defaultVal) {
+
+        if (!process.env[envar]) {
+            return defaultVal;
+        }
+        if (['true', '1', 'on'].indexOf(process.env[envar].toLowerCase().trim()) !== -1) {
+            return true;
+        } else if (['false', '0', 'off'].indexOf(process.env[envar].toLowerCase().trim()) !== -1) {
+            return false;
+        } else {
+            logger.warn('Invalid "%s" environment var value. (%s) Should be Boolean', envar, process.env[envar]);
+            return defaultVal;
+        }
+}
+
 function loadConfiguration() {
     var environmentValues = [
         'PERSEO_ENDPOINT_HOST',
@@ -55,6 +73,7 @@ function loadConfiguration() {
         'PERSEO_LOG_LEVEL',
         'PERSEO_SMTP_PORT',
         'PERSEO_SMTP_HOST',
+        'PERSEO_SMTP_VERIFY_CA',
         'PERSEO_SMTP_SECURE',
         'PERSEO_SMTP_AUTH_USER',
         'PERSEO_SMTP_AUTH_PASS',
@@ -121,23 +140,26 @@ function loadConfiguration() {
     if (process.env.PERSEO_ORION_URL) {
         config.orion.URL = new URL(process.env.PERSEO_ORION_URL);
     }
-    if (process.env.PERSEO_LOG_LEVEL) {
-        config.logLevel = process.env.PERSEO_LOG_LEVEL;
-    }
 
+    // SMTP Config
     config.smtp = config.smtp || {};
     config.smtp.port = process.env.PERSEO_SMTP_PORT || config.smtp.port;
     config.smtp.host = process.env.PERSEO_SMTP_HOST || config.smtp.host;
-    if (process.env.PERSEO_SMTP_SECURE === 'true') {
-        config.smtp.secure = true;
+    config.smtp.tls = config.smtp.tls || {};
+    config.smtp.tls.rejectUnauthorized = getNormalizedBoolVar('PERSEO_SMTP_VERIFY_CA',
+                                                             config.smtp.tls.rejectUnauthorized);
+
+    config.smtp.secure = getNormalizedBoolVar('PERSEO_SMTP_SECURE', config.smtp.secure);
+
+    if (config.smtp.secure) {
         config.smtp.auth = config.smtp.auth || {};
         config.smtp.auth.user = process.env.PERSEO_SMTP_AUTH_USER || config.smtp.auth.user;
         config.smtp.auth.pass = process.env.PERSEO_SMTP_AUTH_PASS || config.smtp.auth.pass;
     }
-    else if (process.env.PERSEO_SMTP_SECURE === 'false') {
-        config.smtp.secure = false;
+    else {
         delete config.smtp.auth;
     }
+
     config.sms = config.sms || {};
     config.sms.URL = process.env.PERSEO_SMS_URL || config.sms.URL;
     config.sms.API_KEY = process.env.PERSEO_SMS_API_KEY || config.sms.API_KEY;
