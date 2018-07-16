@@ -73,9 +73,24 @@ function loadConfiguration() {
 
     ];
 
+    // Set Log level
+    var validLevels = ['FATAL', 'ERROR', 'INFO', 'DEBUG'];
+    if (process.env.PERSEO_LOG_LEVEL) {
+        var level = 'INFO'; // Default
+        if (validLevels.indexOf(process.env.PERSEO_LOG_LEVEL.toUpperCase()) !== -1) {
+            level = process.env.PERSEO_LOG_LEVEL;
+        } else {
+            logger.warn('Ignoring invalid PERSEO_LOG_LEVEL: %s', process.env.PERSEO_LOG_LEVEL);
+        }
+        config.logLevel = level;
+        logger.setLevel(level);
+        logger.info('Log level: %s', level);
+    }
+
     for (var i = 0; i < environmentValues.length; i++) {
         if (process.env[environmentValues[i]]) {
-            console.log('Changing %s to environment value: %s', environmentValues[i], process.env[environmentValues[i]]);
+            logger.debug('Changing %s to environment value: %s', environmentValues[i],
+                         process.env[environmentValues[i]]);
         }
     }
 
