@@ -8,15 +8,9 @@ chai.Should();
 chai.use(sinonChai);
 // for requires moking
 var proxyquire =  require('proxyquire');
-
-
+expect(proxyquire).exist;
 
 var validLogLevels = ['FATAL', 'ERROR', 'INFO', 'DEBUG', 'fatal', 'error', 'infO', 'Debug'];
-
-/*var perseo, getNormalizedBoolVar, loadConfiguration;
-perseo = rewire('../../bin/perseo');
-getNormalizedBoolVar = perseo.__get__('getNormalizedBoolVar');
-loadConfiguration = perseo.__get__('loadConfiguration');*/
 
 
 describe('Perseo', function() {
