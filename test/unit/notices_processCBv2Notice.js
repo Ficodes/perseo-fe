@@ -60,7 +60,7 @@ var x = 441298.13043762115;
 var y = 4474481.316254241;
 var locValue = lat + ', ' + long;
 
-describe('Notices', function() {
+describe('Notices NGSIv2', function() {
     var noticeExample;
     beforeEach(function() {
         // Default
