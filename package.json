@@ -37,7 +37,7 @@
     "grunt-plato": "~0.2.0",
     "istanbul": "^0.4.5",
     "mocha": "~1.13.0",
-    "proxyquire": "0.5.1",
+    "proxyquire": "2.0.1",
     "rewire": "^4.0.1",
     "should": "8.2.2",
     "sinon": "~6.1.0",
