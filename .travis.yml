@@ -12,6 +12,7 @@ branches:
     - develop
     - update/dependencies
     - feature/NGSIv2
+    - feature/autoRuleName
 
 services:
  - mongodb
