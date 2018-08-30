@@ -8,11 +8,7 @@ node_js:
 
 branches:
   only:
-    - master
-    - develop
-    - update/dependencies
-    - feature/NGSIv2
-    - fix/updateActionv2
+  - /.*/
 
 services:
  - mongodb
