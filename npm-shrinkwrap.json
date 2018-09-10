@@ -2925,9 +2925,9 @@
       "dev": true
     },
     "ngsijs": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/ngsijs/-/ngsijs-1.1.0.tgz",
-      "integrity": "sha1-yYBExzsKtGowEnleq3b2OXra9Zg=",
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/ngsijs/-/ngsijs-1.2.0.tgz",
+      "integrity": "sha512-bZvn+wrm1sK7QxK/8UY33Fxi5H17Hf9las5zacAi7rkoawj17Iq8KknjdqLNG4tJhCg3GVoUiXA8NEUECed45w==",
       "requires": {
         "whatwg-url": "^4.5.0"
       }
