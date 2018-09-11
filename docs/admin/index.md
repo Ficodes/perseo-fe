@@ -1,4 +1,4 @@
-# Perseo Context-Aware CEP
+# Perseo Context-Aware CEP Admin Guide
 
 ## Deployment of Perseo
 

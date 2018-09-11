@@ -2,7 +2,7 @@
 
 ## Overview
 
-Perseo is a Complex Event Processing (CEP) software that implements a simplified version of the CEP GE Open Specification and Architecture. It has been designed to be *NGSI*-compliant, using it as the communication protocol for events, and thus, Perseo is able to seamless and jointly work with a *context broker* like Orion.
+Perseo is a Complex Event Processing (CEP) software that implements a simplified version of the CEP GE Open Specification and Architecture. It has been designed to be fully *NGSIv2*-compliant, using it as the communication protocol for events, and thus, Perseo is able to seamless and jointly work with *context brokers* like Orion.
 
 It follows a straightforward idea: listening to events coming from context information to identify patterns described by rules, in order to immediately react upon them by triggering actions.
 
@@ -12,5 +12,6 @@ By leveraging on the [notifications mechanism](http://fiware-orion.readthedocs.i
 
 ### More information
 
+- Refer to the [Open Specs](docs/API/index.md) section for info on APIs, Rules and Actions.
 - Refer to the [Admin Guide](docs/admin/index.md) for info on how to install Perseo and get it running.
 - Refer to the [User Manual](docs/user/index.md) for more info on how to use it.
