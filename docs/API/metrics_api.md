@@ -1,5 +1,7 @@
 ##<a name="top"></a>Metrics API
+
 ![Legacy](../images/legacy.png)
+
 ### Introduction
 
 The Perseo Metrics API is a REST-based API that can be used to get relevant operational metrics. 
