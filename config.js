@@ -111,7 +111,10 @@ config.nextCore = {
 config.smtp = {
     port: 25,
     host: 'smtpserver',
-    secure: false
+    secure: false,
+    tls: {
+        rejectUnauthorized: true
+    }
     /*
      ,
      auth: {

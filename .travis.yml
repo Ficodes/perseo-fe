@@ -1,12 +1,14 @@
 language: node_js
 
 node_js:
- - "4"
- - "6"
+ - "6" # npm-shrinkwrap.json required in Node 6
+ - "8"
+ - "10"
+ - "lts/*"
 
 branches:
   only:
-    - master
+  - /.*/
 
 services:
  - mongodb

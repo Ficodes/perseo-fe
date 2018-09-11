@@ -21,6 +21,7 @@ The following table shows the environment variables available for Perseo configu
 | PERSEO_LOG_LEVEL          | Log level.         |
 | PERSEO_SMTP_HOST          | Host of the SMTP server |
 | PERSEO_SMTP_PORT          | Port of the SMTP server |
+| PERSEO_SMTP_VERIFY_CA     | `true` if self-signed or invalid TLS certificate should be rejected |
 | PERSEO_SMTP_SECURE        | `true` if SSL should be used with the SMTP server |
 | PERSEO_SMTP_AUTH_USER     | Authentication data, the username |
 | PERSEO_SMTP_AUTH_PASS     | Authentication data, the password for the user |
@@ -46,6 +47,7 @@ In order to have perseo running, there are several basic pieces of information t
 * `config.smtp.port`: port for sending email.
 * `config.smtp.host`:  host for sending email.
 * `config.smtp.secure`:  defines if the connection should use SSL (if true) or not (if false).
+* `config.smtp.tls.rejectUnauthorized`:  defines if if self-signed or invalid TLS certificate should be rejected (if true) or not (if false).
 * `config.smtp.auth.user`:  authentication data, the username.
 * `config.smtp.auth.pass`:  authentication data, the password for the user.
 * `config.sms.URL`: URL for sending SMSs.
@@ -58,7 +60,7 @@ In order to have perseo running, there are several basic pieces of information t
 * `config.smpp.password`: Password for the user of the SMPP server
 * `config.smpp.from`: Number from SMS are sending by SMPP server
 * `config.smpp.enabled`: SMPP is default method for SMS instead of use SMS gateway.
-* `config.orion.URL`: URL for updating contexts at Orion (Context Broker).
+* `config.orion.URL`: Context Broker URL, e.g. https://orion.example.com
 * `config.mongo.URL`: URL for connecting mongoDB.
 * `config.executionsTTL`: Time-To-Live for documents of action executions (seconds).
 * `config.checkDB.delay`:  Number of milliseconds to check DB connection (see [database aspects](admin.md#database-aspects) documentation for mode detail).

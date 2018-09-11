@@ -29,7 +29,8 @@ var app = require('../lib/perseo'),
     logger = require('logops'),
     constants = require('../lib/constants'),
     config = require('../config'),
-    context = {op: 'perseo', comp: constants.COMPONENT_NAME};
+    context = {op: 'perseo', comp: constants.COMPONENT_NAME},
+    URL = require('url').URL;
 
 logger.format = logger.formatters.pipe;
 
@@ -39,6 +40,24 @@ process.on('uncaughtException', function(ex){
         process.exit(-1);
     });
 });
+
+/*
+ * Normalize env var and return the value
+ */
+function getNormalizedBoolVar(envar, defaultVal) {
+
+        if (!process.env[envar]) {
+            return defaultVal;
+        }
+        if (['true', '1', 'on'].indexOf(process.env[envar].toLowerCase().trim()) !== -1) {
+            return true;
+        } else if (['false', '0', 'off'].indexOf(process.env[envar].toLowerCase().trim()) !== -1) {
+            return false;
+        } else {
+            logger.warn('Invalid "%s" environment var value. (%s) Should be Boolean', envar, process.env[envar]);
+            return defaultVal;
+        }
+}
 
 function loadConfiguration() {
     var environmentValues = [
@@ -54,6 +73,7 @@ function loadConfiguration() {
         'PERSEO_LOG_LEVEL',
         'PERSEO_SMTP_PORT',
         'PERSEO_SMTP_HOST',
+        'PERSEO_SMTP_VERIFY_CA',
         'PERSEO_SMTP_SECURE',
         'PERSEO_SMTP_AUTH_USER',
         'PERSEO_SMTP_AUTH_PASS',
@@ -72,9 +92,24 @@ function loadConfiguration() {
 
     ];
 
+    // Set Log level
+    var validLevels = ['FATAL', 'ERROR', 'INFO', 'DEBUG'];
+    if (process.env.PERSEO_LOG_LEVEL) {
+        var level = 'INFO'; // Default
+        if (validLevels.indexOf(process.env.PERSEO_LOG_LEVEL.toUpperCase()) !== -1) {
+            level = process.env.PERSEO_LOG_LEVEL;
+        } else {
+            logger.warn('Ignoring invalid PERSEO_LOG_LEVEL: %s', process.env.PERSEO_LOG_LEVEL);
+        }
+        config.logLevel = level;
+        logger.setLevel(level);
+        logger.info('Log level: %s', level);
+    }
+
     for (var i = 0; i < environmentValues.length; i++) {
         if (process.env[environmentValues[i]]) {
-            console.log('Changing %s to environment value: %s', environmentValues[i], process.env[environmentValues[i]]);
+            logger.debug('Changing %s to environment value: %s', environmentValues[i],
+                         process.env[environmentValues[i]]);
         }
     }
 
@@ -103,25 +138,28 @@ function loadConfiguration() {
         config.nextCore.noticesURL = process.env.PERSEO_NEXT_URL + '/perseo-core/events';
     }
     if (process.env.PERSEO_ORION_URL) {
-        config.orion.URL = process.env.PERSEO_ORION_URL;
-    }
-    if (process.env.PERSEO_LOG_LEVEL) {
-        config.logLevel = process.env.PERSEO_LOG_LEVEL;
+        config.orion.URL = new URL(process.env.PERSEO_ORION_URL);
     }
 
+    // SMTP Config
     config.smtp = config.smtp || {};
     config.smtp.port = process.env.PERSEO_SMTP_PORT || config.smtp.port;
     config.smtp.host = process.env.PERSEO_SMTP_HOST || config.smtp.host;
-    if (process.env.PERSEO_SMTP_SECURE === 'true') {
-        config.smtp.secure = true;
+    config.smtp.tls = config.smtp.tls || {};
+    config.smtp.tls.rejectUnauthorized = getNormalizedBoolVar('PERSEO_SMTP_VERIFY_CA',
+                                                             config.smtp.tls.rejectUnauthorized);
+
+    config.smtp.secure = getNormalizedBoolVar('PERSEO_SMTP_SECURE', config.smtp.secure);
+
+    if (config.smtp.secure) {
         config.smtp.auth = config.smtp.auth || {};
         config.smtp.auth.user = process.env.PERSEO_SMTP_AUTH_USER || config.smtp.auth.user;
         config.smtp.auth.pass = process.env.PERSEO_SMTP_AUTH_PASS || config.smtp.auth.pass;
     }
-    else if (process.env.PERSEO_SMTP_SECURE === 'false') {
-        config.smtp.secure = false;
+    else {
         delete config.smtp.auth;
     }
+
     config.sms = config.sms || {};
     config.sms.URL = process.env.PERSEO_SMS_URL || config.sms.URL;
     config.sms.API_KEY = process.env.PERSEO_SMS_API_KEY || config.sms.API_KEY;

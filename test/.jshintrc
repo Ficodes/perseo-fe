@@ -28,6 +28,7 @@
         "mock": true,
         "sinon": true
     },
+    "esversion":6,
     "predef":
         [
             "describe", "beforeEach", "afterEach", "it"
