@@ -1,4 +1,4 @@
-##<a name="top"></a>Metrics API
+## <a name="top"></a>Metrics API
 
 ![Legacy](../images/legacy.png)
 
