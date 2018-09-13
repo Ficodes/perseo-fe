@@ -26,21 +26,13 @@ paths:
       tags:
         - notice
       summary: Notify Perseo
-      description: 'Perseo listens in this endpopint, waiting for NGSI notifications'
+      description: Perseo listens in this endpopint, waiting for NGSI notifications
       operationId: newNotification
       requestBody:
-        description: NGSI Notification
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/requestBodies/Notice'
+        $ref: '#/components/requestBodies/Notice'
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/responses/NoticeResponse'
+          $ref: '#/components/responses/NoticeResponse'
 
   /rules:
     get:
@@ -51,11 +43,7 @@ paths:
       operationId: gelAllRules
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/responses/Rules'
+          $ref: '#/components/responses/Rules'
     post:
       tags:
         - rule
@@ -63,21 +51,13 @@ paths:
       description: Add new Rule in Perseo
       operationId: addNewRule
       requestBody:
-        description: Perseo Rule
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/requestBodies/Rule'
+        $ref: '#/components/requestBodies/Rule'
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/responses/newRule'
+          $ref: '#/components/responses/newRule'
 
 
-  '/rules/{ruleName}':
+  /rules/{ruleName}:
     get:
       tags:
         - rule
@@ -93,11 +73,8 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/Rule'
+          $ref: '#/components/responses/Rule'
+
     delete:
       tags:
         - rule
@@ -113,11 +90,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/responses/DeletedRule'
+          $ref: '#/components/responses/DeletedRule'
 
   /version:
     get:
@@ -128,11 +101,7 @@ paths:
       operationId: getVersion
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/responses/Version'
+          $ref: '#/components/responses/Version'
 
   /admin/log:
     get:
@@ -143,11 +112,7 @@ paths:
       operationId: gelLogLevel
       responses:
         '200':
-          description: successful operation
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/responses/LogInfo'
+          $ref: '#/components/responses/LogInfo'
     put:
       tags:
         - log
@@ -174,16 +139,6 @@ paths:
 
 components:
   schemas:
-    Rule:
-      type: object
-      properties:
-        error:
-          type: string
-        data:
-          $ref: '#/components/schemas/Rule'
-      required:
-        - error
-        - data
 
     InternalRule:
       type: object
@@ -194,10 +149,10 @@ components:
           type: string
         text:
           type: string
-        action: # TODO 2 diferent types, single action or a list of actions
+        action: # TODO Check 2 diferent types, single action or a list of actions
           type: array
           items:
-            $ref: '#/components/schemas/InternalRule'
+            $ref: '#/components/schemas/Action'
         subservice:
           type: string
         service:
@@ -382,22 +337,49 @@ components:
           description: JSON body. Use string substitution syntax ${fieldName} to reference the fields of the notification/event, including the id or type of the entity that triggers the rule. In this JSON, you can use substitution syntax in the keys and values of the object's fields. If present, it overrides template from action
         headers:
           type: object
-          description: Object with fields and values for the HTTP header.
+          description: HTTP headers.  An object with fields and values for the HTTP header.  Use string substitution syntax ${fieldName} to reference the fields of the notification/event, including the id or type of the entity that triggers the rule. In this JSON, you can use substitution syntax in the keys and values of the object's fields.
       required:
         - parameters
+        - template
 
     TwitterAction:
       allOf:
         - $ref: '#/components/schemas/BasicAction'
       type: object
+      description: Twwiter request action
       properties:
         parameters:
           type: object
-          description: ss
+          description: Twwiter parameters
+          properties:
+            consumer_key:
+              type: string
+              description: Twitter API key
+              example: xvz1evFS4wEEPTGEFPHBog
+            consumer_secret:
+              type: string
+              description: Twitter API Secret
+              example: L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg
+            access_token_key:
+              type: string
+              description: Twitter Access token
+              example: xvz1evFS4wEEPTGEFPHBog
+            access_token_secret:
+              type: string
+              description: Twitter Access token secret
+              example: L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg
+          required:
+            - to
+            - from
+            - subject
+        template:
+          type: string
+          description: Twitter message. Use string substitution syntax ${fieldName} to reference the fields of the notification/event, including the id or type of the entity that triggers the rule.
       required:
         - parameters
 
   requestBodies:
+
     Notice:
       content:
         'application/json':
@@ -406,11 +388,12 @@ components:
             properties:
               subscriptionId:
                 type: string
+                example: 5b8e65bb3e39542eae0f9e98
               data:
                 type: array
                 description: List of NGSI notification objects
                 items:
-                  type: object
+                  type: object #TODO NGSI entity information
             required:
               - subscriptionId
               - data
@@ -445,6 +428,7 @@ components:
             properties:
               error:
                 type: string
+                example: null
               data:
                 type: array
                 items:
@@ -452,20 +436,20 @@ components:
                   properties:
                     code:
                       type: integer
+                      example: 200
                 required:
                   - code
             required:
               - error
               - data
-          example: 'whoa!'
-      headers: # TODO
+      headers: # TODO real headers
         X-Rate-Limit-Limit:
           description: The number of allowed requests in the current period
           schema:
             type: integer
 
     Rules:
-      description: Get All Rules Response
+      description: All Rules
       content:
         'application/json':
           schema:
@@ -475,6 +459,7 @@ components:
               properties:
                 error:
                   type: string
+                  example: null
                 data:
                   type: array
                   items:
@@ -482,8 +467,9 @@ components:
               required:
                 - error
                 - data
-    newRule:
-      description: Rule Added Response
+
+    Rule:
+      description: A Rule
       content:
         'application/json':
           schema:
@@ -493,16 +479,15 @@ components:
               properties:
                 error:
                   type: string
+                  example: null
                 data:
-                  type: array
-                  items:
-                    type: object
+                  $ref: '#/components/schemas/InternalRule'
               required:
                 - error
                 - data
 
-    DeletedRule:
-      description: Rule Added Response
+    newRule:
+      description: Rule Added
       content:
         'application/json':
           schema:
@@ -510,6 +495,25 @@ components:
             properties:
               error:
                 type: string
+                example: null
+              data:
+                type: array
+                items:
+                  type: object # TODO array with booleans, objets, arrays and nulls ¡Allin!
+            required:
+              - error
+              - data
+
+    DeletedRule:
+      description: Rule Deleted
+      content:
+        'application/json':
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: null
               data:
                 type: array
                 items:
@@ -521,7 +525,7 @@ components:
               - data
 
     LogInfo:
-      description: Rule Added Response
+      description: Log level Information
       content:
         'application/json':
           schema:
@@ -533,23 +537,27 @@ components:
                 $ref: '#/components/schemas/LogLevel'
 
     Version:
-      description: Rule Added Response
+      description: Perseo Version
       content:
         'application/json':
           schema:
             type: object
             properties:
               error:
-                $ref: '#/components/schemas/LogLevel'
+                type: string
+                example: null
               data:
                 type: object
                 properties:
                   name:
                     type: string
+                    example: perseo
                   description:
                     type: string
+                    example: IOT CEP front End
                   version:
                     type: string
+                    example: 1.6.0-next
             required:
               - error
               - data
