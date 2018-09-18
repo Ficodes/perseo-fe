@@ -157,10 +157,10 @@ components:
           type: string
         text:
           type: string
-        action: # TODO Check 2 diferent types, single action or a list of actions
-          type: array
-          items:
-            $ref: '#/components/schemas/Action'
+        action:
+          oneOf:
+            - $ref: '#/components/schemas/Action'
+            - $ref: '#/components/schemas/ActionList'
         subservice:
           type: string
         service:
@@ -198,6 +198,11 @@ components:
           email: '#/components/schemas/EmailAction'
           post: '#/components/schemas/HTTPAction'
           twitter: '#/components/schemas/TwitterAction'
+
+    ActionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Action'
 
     ActionType:
       type: string
