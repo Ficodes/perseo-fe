@@ -138,24 +138,14 @@ paths:
       description: Set the Perseo log level
       operationId: changeLogLevel
       parameters:
-        - in: query
-          name: level
-          required: true
-          description: Perseo log levels
-          schema:
-            type: string
-            enum:
-              - FATAL
-              - ERROR
-              - WARN
-              - INFO
-              - DEBUG
+        - $ref: '#/components/schemas/LogLevel'
       responses:
         '200':
           description: successful operation
 
 
 components:
+
   schemas:
 
     InternalRule:
@@ -396,44 +386,52 @@ components:
       required:
         - parameters
 
+    NewNotice:
+      type: object
+      description: New Notice for Perseo
+      properties:
+        subscriptionId:
+          type: string
+          example: 5b8e65bb3e39542eae0f9e98
+        data:
+          type: array
+          description: List of NGSI notification objects
+          items:
+            type: object #TODO NGSI entity information
+      required:
+        - subscriptionId
+        - data
+
+    Rule:
+      type: object
+      description: New Rule for Perseo
+      properties:
+        name:
+          type: string
+        text:
+          type: string
+        action:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - name
+        - text
+        - action
+
   requestBodies:
 
     Notice:
       content:
         'application/json':
           schema:
-            type: object
-            properties:
-              subscriptionId:
-                type: string
-                example: 5b8e65bb3e39542eae0f9e98
-              data:
-                type: array
-                description: List of NGSI notification objects
-                items:
-                  type: object #TODO NGSI entity information
-            required:
-              - subscriptionId
-              - data
+            $ref: '#/components/schemas/NewNotice'
 
     Rule:
       content:
         'application/json':
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-              text:
-                type: string
-              action:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Action'
-            required:
-              - name
-              - text
-              - action
+            $ref: '#/components/schemas/Rule'
 
   responses:
 
@@ -460,49 +458,46 @@ components:
             required:
               - error
               - data
-      headers: # TODO real headers
-        X-Rate-Limit-Limit:
-          description: The number of allowed requests in the current period
-          schema:
-            type: integer
+      headers:
+        - $ref: '#/components/parameters/correlatorID'
 
     Rules:
       description: All Rules
       content:
         'application/json':
           schema:
-            type: array
-            items:
-              type: object
-              properties:
-                error:
-                  type: string
-                  example: null
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/InternalRule'
-              required:
-                - error
-                - data
+            type: object
+            properties:
+              error:
+                type: string
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InternalRule'
+            required:
+              - error
+              - data
+      headers:
+        - $ref: '#/components/parameters/correlatorID'
 
     Rule:
       description: A Rule
       content:
         'application/json':
           schema:
-            type: array
-            items:
-              type: object
-              properties:
-                error:
-                  type: string
-                  example: null
-                data:
-                  $ref: '#/components/schemas/InternalRule'
-              required:
-                - error
-                - data
+            type: object
+            properties:
+              error:
+                type: string
+                example: null
+              data:
+                $ref: '#/components/schemas/InternalRule'
+            required:
+              - error
+              - data
+      headers:
+        - $ref: '#/components/parameters/correlatorID'
 
     newRule:
       description: Rule Added
