@@ -537,7 +537,7 @@ components:
               data:
                 type: array
                 items:
-                  type: object #TODO array with several things {n:1, ok:1}, [{code:200, body: "{\"name\":\"simple_rule@ficodes/demos/preparation/fiwaresummit2\",\"timeLastStateChange\":1536858899353,\"text\":\"context ctxt$ficodes$demos$preparation$fiwaresummit2 select ev.id? as id, ev.NO2? as NO2, \\\"simple_rule\\\" as ruleName from pattern [every ev=iotEvent(cast(cast(NO2?,String),float)>66)]\",\"state\":\"DESTROYED\"}\n"}, null], null
+                  type: object #TODO array with several things {n:1, ok:1}, [{code:200, body: "{\"name\":\"simple_rule@ficodes/demos/preparation/fiwaresummit2\",\"timeLastStateChange\":1536858899353,\"text\":\"context ctxt$ficodes$demos$preparation$fiwaresummit2 select ev.id? as id, ev.NO2? as NO2 from pattern [every ev=iotEvent(cast(cast(NO2?,String),float)>66)]\",\"state\":\"DESTROYED\"}\n"}, null], null
                 required:
                   - code
             required:
