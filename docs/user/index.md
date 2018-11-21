@@ -1,69 +1,72 @@
-# Plain rules
+# User & Programmers Manual
 
-Plain rules allow a full customization of a rule with specific needs by means of setting the final EPL statement used by the Esper engine inside perseo-core. In order to work with perseo (front-end) properly, the EPL statement must fulfill several conventions for the rule to be able to operate on the incoming events and trigger adequate actions.
+This document describes how to use Perseo...
 
-The “anatomy” of a rule is as follows
+## Content
+
+-   [Setting things up](#Setting things up)
+- Qué necesito para funcionar?
+- Cómo conecto con Orion para que me notifique?
+- Cómo creo reglas en perseo?
+-  [Perseo Rules](#Perseo Rules)
+	- EPL
+	- Acciones
+-   
+
+## Setting things up
+
+  
+
+## Perseo Rules
+
+Perseo rules follow a simple JSON structure made up of three mandatory *key-value* fields: **`name`**, **`text`**, and **`action`**. The structure of these rules is sketched in the following JSON code:
 
 ```json
 {
-   "name":"blood_rule_update",
-   "text":"select *,\"blood_rule_update\" as ruleName, *, ev.BloodPressure? as Pressure, ev.id? as Meter from pattern [every ev=iotEvent(cast(cast(BloodPressure?,String),float)>1.5 and type=\"BloodMeter\")]",
+   "name":"<The name of the rule>",
+   "text":"<Insert here a valid EPL statement>",
    "action":{
-      "type":"update",
+      "type":"[update|sms|email|post|twitter]",
       "parameters":{
-         "name":"abnormal",
-         "value":"true",
-         "type":"boolean"
+         ...
       }
    }
 }
 ```
-The fields (all must be present) are
 
-* **name**: name of the rule, used as identifier
-* **text**: EPL statment for the rule engine in perseo-core
-* **action**: action to be performed by perseo if the rule is fired from the core
+The `name` field refers to the name of the rule, and it is used as rule identifier. It must start by a letter, and can contain digits (0-9), underscores (_) and dashes (-). Their maximum length is set to 50 characters.
 
-The rule name must consist of the ASCII characters from A to Z, from a to z, digits (0-9), underscore (_) and dash (-). It can have a maximum length of 50 characters.
+The `action` field states the action to be performed by Perseo when the rule triggers. You can also use an **array** of action objects if needed. Each of those actions will be executed when the rule is fired, avoiding to duplicate a rule only for getting several actions executed.
 
-The field `action` can be also an array of "actions", objects with the same structure than the single action described in the rest of the documentation. Each of those actions will be executed when the rule is fired, avoiding to duplicate a rule only for getting several actions executed. For practical purposes, it is the same result that would be obtained with multiple rules with the same condition.
+Last but no least, the `text` field contains the valid EPL statement to be send to the Esper-based core rule engine. The value of this field must follow the EPL syntax, that is fully documented in the [Esper website](http://esper.espertech.com/release-6.1.0/esper-reference/html/index.html), in [here](http://esper.espertech.com/release-6.1.0/esper-reference/html/epl_clauses.html).
 
-## EPL text
-The field ```text``` of the rule must be a valid EPL statement and additionally must honor several restrictions to match expectations of perseo and perseo-core.
+Late 2018 `-ficodes` versions of Perseo should work with any of the EPL clauses. However, you should take into consideration the following guidelines:
 
-EPL is documented in [Esper website](http://www.espertech.com/esper/esper-documentation), in particular [version 5.5.0](http://esper.espertech.com/release-5.5.0/esper-reference/html/index.html).
+* The name of the stream from which events will come is `iotEvent`.
+* A `type=` condition should be included to avoid mixing different kinds of entities.
+* Entity's attributes must be cast to `float` in case of being numeric, to `String` otherwise. 
+* All the attributes of the context broker notification are available as dynamic properties of the event object `ev`.
+* A question mark `?` is *necessary* for EPL to refer to ‘dynamic’ values (duck typing), such as `ev.id?`.
+* Metadata is also available as explained in the [metadata and object values](#metadata-and-object-values) section.
 
-A EPL statement to use with perseo could be:
+Following there is an example of a valid EPL clause ready to be used with Perseo:
 
 ```
-select *, "blood_rule_update" as ruleName,
-	 ev.BloodPressure? as Pressure, ev.id? as Meter
+select *, ev.BloodPressure? as Pressure, ev.id? as Meter
 from pattern
- [every ev=iotEvent(cast(cast(BloodPressure?,String),float)>1.5 and type="BloodMeter")]
+     [every ev=iotEvent(cast(cast(BloodPressure?,String),float)>1.5 and type="BloodMeter")]
 ```
 
-
-* The rule name must be present with **ruleName** alias. It must be equal to the ‘name’ field of the rule object
-* The *from* pattern must name the event as **ev** and the event stream from which take events must be **iotEvent**
-* A *type=* condition must be concatenated for avoiding mixing different kinds of entities
-
-The used entity's attributes must be cast to `float` in case of being numeric (like  in the example). Alphanumeric 
-values must be cast to `String`. Nested cast to string and to float is something we are analyzing, and could be 
-unnecessary in a future version. Use it by now. All the attributes in the notification from Orion are available in the 
-event object, **ev**,  like *ev.BlodPressure?* and *ev.id?*. A question mark is *necessary* for EPL referring ‘dynamic’ 
-values. Metadata is also available as explained in [Metadata and object values](#metadata-and-object-values).
-
-
-<a name="actions"></a>
-## Actions
-
-When a rule is fired, the "complex event" generated by the select clause is sent to perseo (front-end) which executes the action using the generated event as parameter to the action.
-
-There are a predefined set of actions: sending a SMS,  sending  a email, updating an attribute of the entity that fired the rule and making a HTTP POST to a provided URL.
+You will find more examples of valid rules in the [Examples of rules]() section.
 
 
 
-The action must be provided in the ```action``` field of rule. An example:
+### Actions
+
+When one or more events come from the context broker and match some of the rules stored in the rule engine, those rules are fired. The core of Perseo (Esper), will generate a *complex event* by using the `select` clause of the EPL, and then it will send it back to the front-end side of Perseo, which will execute the action using the generated event as a parameter.
+
+Actions are set by means of the `action` field of the rule. Let's see an example:
+
 ```json
    "action":{
       "type":"update",
@@ -77,37 +80,27 @@ The action must be provided in the ```action``` field of rule. An example:
 
 ```
 
-The `type` field is mandatory and must be one of
-* `update`: update an entity's attribute
-* `sms`: send a SMS
-* `email`: send an email
-* `post`: make an HTTP POST
-* `twitter`: send a twitter
+The `type` field is mandatory and must be one of the following:
 
-An action can *optionally* have a field `interval` for limiting the frequency of the action execution (for the rule and
-entity which fired it). The value is expressed in milliseconds and is the minimum period between executions. Once the action 
-is executed _successfully_, it won't be executed again until that period has elapsed. All the request from core to execute
-it are silently discarded. This way, the rate of executions for an entity and rule can be limited. (Strictly, the minimum
-time between executions)
+* `update` - creating or updating entities and attributes of those entities in the context broker
+* `sms` - sending a SMS
+* `email` - sending an email
+* `post` - making a HTTP POST request to a provided URL 
+* `twitter` - sending a tweet
 
-### String substitution syntax
+An action can *optionally* have a field called `interval`, aimed at limiting the frequency of the action execution (for the rule and entity which fired it). The value is expressed in milliseconds, and represents the minimum lapse between executions. Once the action is _successfully_ executed, it won't be executed again until that period of time has elapsed. All execution requests in between will be silently discarded.
 
-Some of the fields of an `action` (see detailed list below) can include a reference to one of the fields of the 
-notification/event. This allows include information as the received "pressure" value, the id of the device, etc. For 
-example, the actions `sms`, `email`, `post` include a field `template` used to build the body of message/request. This 
-text can include placeholders for attributes of the generated event. That placeholder has the form `${X}` where `X` 
-may be:
+#### String substitution syntax
+
+An `action` can include references to one or more of the available atributes of the context broker's notification. This allows you to leverage context information in a very simple way. For example, the `sms`, `email`, and `post` actions include a `template` field that can be used to build the body of the message/request. This text can include placeholders for those attributes of the generated complex event. The placeholder takes the form of `${X}`, with `X` being one of the following:
 
 * `id` for the id of the entity that triggers the rule.
-* `type` for the type of the entity that triggers the rule
-* Any other value is interpreted as the name of an attribute in the entity which triggers the rule and the placeholder 
-is substituted by the value of that attribute.
+* `type` for the type of the entity that triggers the rule.
+* Any other value is interpreted as the name of an attribute in the entity which triggers the rule, and the placeholder is substituted by the value of that attribute.
 
+This also implies for 
 
-
-All alias for simple event attributes or "complex" calculated values can be directly used in the placeholder with their 
-name. And any of the original event attributes (with the special cases for `id` and `type` meaning entity ID and type, 
-respectively) can be referred too.
+All alias for simple event attributes or "complex" calculated values can be directly used in the placeholder with their name. And any of the original event attributes (with the special cases for `id` and `type` meaning entity ID and type, respectively) can be referred too.
 
 This substitution can be used in the the following fields:
 * `template`, `from`, `to` and `subject` for `email` action
@@ -117,7 +110,7 @@ This substitution can be used in the the following fields:
 * `id`, `type`, `name`, `value`, `ìsPattern` for `update` action
 
 
-### SMS action
+#### SMS action
 
 Sends a SMS to a number set as an action parameter with the body of the message built from the template
 ```json
@@ -133,7 +126,7 @@ The field `parameters` include a field `to` with the number to send the message 
 
 The `template` and `to` fields perform [attribute substitution](#string-substitution-syntax).
 
-### email action
+#### email action
 
 Sends an email to the recipient set in the action parameters, with the body mail build from the `template` field. A field `to` in `parameters` sets the recipient and a field `from`sets the sender's email address. Also the subject of the email can be set in the field `subject` in `parameters`.
 
@@ -151,7 +144,7 @@ Sends an email to the recipient set in the action parameters, with the body mail
 
 The `template`, `from`, `to` and `subject` fields perform [string substitution](#string-substitution-syntax).
 
-### update attribute action
+#### update attribute action
 Updates one or more attributes of a given entity (in the Context Broker instance specified in the Perseo configuration). 
 The `parameters` map includes the following fields:
 
@@ -189,7 +182,7 @@ First time an update action using trust token is triggered, Perseo interacts wit
 It could happen (in theory) that a just got auth token also produce a 401 Not authorized, however this would be an abnormal situation: Perseo logs the problem with the update but doesn't try to get a new one from Keystone. Next time Perseo triggers the action, the process may repeat, i.e. first update attemp fails with 401, Perseo requests a fresh auth token to Keystone, the second update attemp fails with 401, Perseo logs the problem and doesn't retry again.
 
 
-### HTTP request action
+#### HTTP request action
 Makes an HTTP request to an URL specified in `url` inside `parameters`, sending a body built from `template`. 
 The `parameters` field can specify
 * method: *optional*, HTTP method to use, POST by default
@@ -261,7 +254,7 @@ or use the `json` parameter
 The `template` and `url` fields and both the field names and the field values of `qs` and `headers` and `json`
 perform [string substitution](#string-substitution-syntax).
 
-### twitter action
+#### twitter action
 
 Updates the status of a twitter account, with the text build from the `template` field. The field `parameters` must contain the values for the consumer key and secret and the access token key and access token secret of the pre-provisioned application associated to the twitter user.
 
@@ -280,7 +273,7 @@ Updates the status of a twitter account, with the text build from the `template`
 
 The `template` field performs [string substitution](#string-substitution-syntax).
 
-## Metadata and object values
+### Metadata and object values
 
 Metadata values can be accessed by adding the suffix `__metadata__x` to the attribute name, being `x` the name of the 
 metadata attribute. This name can be used in the EPL text of the rule and in the parameters of the action which accept 
@@ -353,7 +346,7 @@ double underscore prefix, so an attribute `x` with fields `a`, `b`, `c`, will al
 Note: be aware of the difference between the key `metadatas` used in the context broker notificacions (v1), ending in `s`
  and the infix `metadata`, without the final `s`, used to access fields from EPL and actions. 
  
-## Location fields
+### Location fields
 
 Fields with geolocation info with the formats recognized by NGSI v1, are parsed and generate two pairs of 
 pseudo-attributes, the first pair is for the latitude and the longitude and the second pair is for the x and y 
@@ -492,7 +485,7 @@ of Cuenca and `d` the distance of 5 000 m.
 Note: for long distances the precision of the computations and the distortion of the projection can introduce some degree 
 of inaccuracy.
 
-## Time fields
+### Time fields
 Some attributes and metadata, supposed to contain a time in ISO8601 format, will generate a pseudo-attribute with the 
 same name as the attribute (or metadata field) and a suffix "__ts", with the parsed value as milliseconds for Unix epoch. 
 This value makes easier to write the EPL text which involves time comparisons. The fields (attribute or metadata) supposed 
@@ -664,3 +657,11 @@ A rule that will check if the employee has been hired in the last half hour, cou
     }
 }
 ```
+
+
+## Examples of rules
+
+* Rules with [Patterns](http://esper.espertech.com/release-6.1.0/esper-reference/html/event_patterns.html)
+* Rules with [Match-Recognize](http://esper.espertech.com/release-6.1.0/esper-reference/html/match-recognize.html)
+* Rules using Funtions and Methods (date time? Spatial method?)
+* Timer rules (Estas son de Perseo o de EPL?)
