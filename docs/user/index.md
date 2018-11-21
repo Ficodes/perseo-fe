@@ -90,29 +90,10 @@ The `type` field is mandatory and must be one of the following:
 
 An action can *optionally* have a field called `interval`, aimed at limiting the frequency of the action execution (for the rule and entity which fired it). The value is expressed in milliseconds, and represents the minimum lapse between executions. Once the action is _successfully_ executed, it won't be executed again until that period of time has elapsed. All execution requests in between will be silently discarded.
 
-#### String substitution syntax
+#### Sending a SMS
 
-An `action` can include references to one or more of the available atributes of the context broker's notification. This allows you to leverage context information in a very simple way. For example, the `sms`, `email`, and `post` actions include a `template` field that can be used to build the body of the message/request. This text can include placeholders for those attributes of the generated complex event. The placeholder takes the form of `${X}`, with `X` being one of the following:
+An action whose `type`is `sms` will send a SMS to the mobile number set in the `to` parameter. The `template` field will represent the body of the message.
 
-* `id` for the id of the entity that triggers the rule.
-* `type` for the type of the entity that triggers the rule.
-* Any other value is interpreted as the name of an attribute in the entity which triggers the rule, and the placeholder is substituted by the value of that attribute.
-
-This also implies for 
-
-All alias for simple event attributes or "complex" calculated values can be directly used in the placeholder with their name. And any of the original event attributes (with the special cases for `id` and `type` meaning entity ID and type, respectively) can be referred too.
-
-This substitution can be used in the the following fields:
-* `template`, `from`, `to` and `subject` for `email` action
-* `template`, `url`, `qs`, `headers`, `json` for `post` action
-* `template` for `sms` action
-* `template` for `twitter` action
-* `id`, `type`, `name`, `value`, `ìsPattern` for `update` action
-
-
-#### SMS action
-
-Sends a SMS to a number set as an action parameter with the body of the message built from the template
 ```json
  "action": {
         "type": "sms",
@@ -122,11 +103,10 @@ Sends a SMS to a number set as an action parameter with the body of the message 
         }
     }
 ```
-The field `parameters` include a field `to` with the number to send the message to.
 
-The `template` and `to` fields perform [attribute substitution](#string-substitution-syntax).
+As shown in the example, is it possible to perform [attribute substitution](#string-substitution-syntax).
 
-#### email action
+#### Send an email
 
 Sends an email to the recipient set in the action parameters, with the body mail build from the `template` field. A field `to` in `parameters` sets the recipient and a field `from`sets the sender's email address. Also the subject of the email can be set in the field `subject` in `parameters`.
 
@@ -272,6 +252,26 @@ Updates the status of a twitter account, with the text build from the `template`
 ```
 
 The `template` field performs [string substitution](#string-substitution-syntax).
+
+
+#### String substitution syntax
+
+An `action` can include references to one or more of the available atributes of the context broker's notification. This allows you to leverage context information in a very simple way. For example, the `sms`, `email`, and `post` actions include a `template` field that can be used to build the body of the message/request. This text can include placeholders for those attributes of the generated complex event. The placeholder takes the form of `${X}`, with `X` being one of the following:
+
+* `id` for the id of the entity that triggers the rule.
+* `type` for the type of the entity that triggers the rule.
+* Any other value is interpreted as the name of an attribute in the entity which triggers the rule, and the placeholder is substituted by the value of that attribute.
+
+This also implies for all aliases for simple event attributes, and for "complex" calculated values, that can be directly used in the placeholder with their name. Any of the original event attributes (with the special cases for `id` and `type` meaning entity ID and type, respectively) can be referred to as well.
+
+This substitution mechanism can be used in the the following fields:
+
+* `template`, `from`, `to` and `subject` for `email` action
+* `template`, `url`, `qs`, `headers`, `json` for `post` action
+* `template` for `sms` action
+* `template` for `twitter` action
+* `id`, `type`, `name`, `value`, `ìsPattern` for `update` action
+
 
 ### Metadata and object values
 
