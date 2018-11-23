@@ -20,6 +20,7 @@ pages:
       - 'Introduction': 'admin.md'
       - 'Configuration': 'configuration.md'
       - 'Deployment': 'deployment.md'
+      - 'Development': 'development.md'
       - 'Logs': 'logs.md'
     - 'User Guide':
       - 'Plain Rules': 'plain_rules.md'
