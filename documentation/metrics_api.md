@@ -9,7 +9,7 @@
 
 ## Introduction
 
-<!-- Perseo implements a REST-based API that can be used to get relevant operational metrics. -->
+Perseo implements a REST-based API that can be used to get relevant operational metrics.
 
 ## Operations
 
