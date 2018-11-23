@@ -1,10 +1,10 @@
 # User & Programmers Manual
 
-This document describes how to use Perseo...
+This document describes how to start using Perseo. Please take into account Perseo uses Esper as rule engine, so you will need some EPL knowledge in order to create rules.
 
 ## Content
 
--   [Setting things up](#Setting things up)
+-   [Getting started with Perseo](#Getting started with Perseo)
 - Qué necesito para funcionar?
 - Cómo conecto con Orion para que me notifique?
 - Cómo creo reglas en perseo?
@@ -13,7 +13,20 @@ This document describes how to use Perseo...
 	- Acciones
 -   
 
-## Setting things up
+## Getting started with Perseo
+
+From this point on we assume you have Perseo services (both front-end and core) running. Please refer to the [Installation Manual](setup.md) for instructions if needed.
+
+Picture 1 shows the more simple scene 
+
+![Perseo simplest scene](images/Perseo-GettingStarted.png)
+
+The first step to take is to shave Perseo subscribed to one o more instances of Orion Context Broker, to get notified when that context data you are interested in changes. Perseo is fully NGSIv2 compatible, so you can post a message like this one:
+
+```json
+{}
+```
+
 
   
 

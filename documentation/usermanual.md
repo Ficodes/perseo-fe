@@ -1,21 +1,102 @@
 # User & Programmers Manual
 
-This document describes how to use Perseo...
+This document describes how to start using Perseo. Please take into account Perseo uses Esper as rule engine, so you will need some EPL knowledge in order to create rules.
 
 ## Content
 
--   [Setting things up](#Setting things up)
+- [Getting started with Perseo](#Getting started with Perseo)
 - Qué necesito para funcionar?
 - Cómo conecto con Orion para que me notifique?
 - Cómo creo reglas en perseo?
 -  [Perseo Rules](#Perseo Rules)
 	- EPL
 	- Acciones
--   
+- [Multitenancy](#Multitenancy)  
 
-## Setting things up
+## Getting started with Perseo
 
-  
+From this point on we assume you have Perseo services (both front-end and core) up and running. Please refer to the [Installation Manual](setup.md) for instructions if needed. The following picture shows the more simple setting for Perseo. It is made up of just Perseo and a single instance of Orion Context Broker.
+
+![Perseo simplest scene](images/Perseo-GettingStarted.png)
+
+The link between Perseo and Orion is established through a NGSI subscription that has to be created in advance. So once we have all components of the setting ready to be used, the first step to take is to have Perseo subscribed to changes on entities of one or more instances of Orion Context Broker, to get notified when that context data you are interested in actually changes. Perseo is fully NGSIv2 compatible, so you will need to post a message like next one to perform notification configuration:
+
+```http
+POST http://<ContextBrokerURL>/v2/subscriptions HTTP/1.1
+Fiware-Service: ficodes
+Fiware-ServicePath: /demo/fiwaresummit18
+Content-Type: application/json
+```
+
+```json
+{
+  "description": "Notify Perseo when OLCtemperature change",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": ".*",
+        "type": "Streetlight"
+      }
+    ],
+    "condition": {
+      "attrs": [
+        "OLCtemperature"
+      ],
+      "expression":  {
+         "q": "OLCtemperature>30"
+      }
+    }
+  },
+  "notification": {
+    "http": {
+      "url": "http://<perseoURL>:9090/notices"
+    },
+    "attrs": [
+        "OLCtemperature",
+        "status"
+    ]
+  },
+  "expires": "2019-06-30T14:00:00.00Z"
+}
+```
+
+NGSI subscriptions are thoroughly explained in [Orion documentation](https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html#subscriptions). Let's see important things to notice from the subscription:
+
+```
+	POST http://<ContextBrokerURL>/v2/subscriptions HTTP/1.1
+```
+
+The first header indicates you have to make a `POST` request to the `<ContextBrokerURL>` valid URL, followed by `/v2/subscription` (remember we are using NGSIv2!). You can use [Postman](https://www.getpostman.com/) or any other similar tool to perform HTTP requests to APIs straightforwardly. 
+
+Next, you have to set the tenant you want to use. Perseo supports the [multi-tenancy model](https://fiware-orion.readthedocs.io/en/master/user/multitenancy/index.html) implemented by Orion and takes advantage of it. See [Multitenancy](#Multitenancy) section for more info.
+
+```
+Fiware-Service: ficodes
+Fiware-ServicePath: /demo/fiwaresummit18
+```
+
+The `Fiware-Service` header identifies the service/tenant to be used. In this example, we are using the `ficodes` tenant. If this header is missing, the default tenant will be used. The `Fiware-ServicePath` header defines the scope from which we want to listen to events. Again, please read the Orion's [multi-tenancy model](https://fiware-orion.readthedocs.io/en/master/user/multitenancy/index.html) documentation if this is the first time you are dealing with this.
+
+Regarding the payload of the message:
+
+- The `url` field of the subscription specifies where Orion will send the notifications. This must be `/notices` endpoint. Perseo listens at port `9090` by default, but take into account you can configure any other port if you wish.
+- Notifications must come in complete NGSI JSON Entity Representation form. That means please do not use options like `"attrsFormat": "keyValues"`
+- The `entities` array allows you to set one or more entity types to listen to their changes. You can populate the array with as much json objects as you may need. Use the `type` field with the proper value for the needed entity.
+- Did you know you can also make use of the `condition` object to filter notifications to be sent to Perseo?
+
+```json
+"condition": {
+      "attrs": [
+        "OLCtemperature"
+      ],
+      "expression":  {
+         "q": "OLCtemperature>30"
+      }
+}
+```
+
+The previous snippet will tell Orion not to notify Perseo unless the value of the OLCtemperature attribute is higher that 30 centrigrade degrees. This is a very good way to complement your rules to perform some filtering.
+
 
 ## Perseo Rules
 
@@ -106,7 +187,7 @@ An action whose `type`is `sms` will send a SMS to the mobile number set in the `
 
 As shown in the example, is it possible to perform [attribute substitution](#string-substitution-syntax).
 
-#### Send an email
+#### Sending an email
 
 Sends an email to the recipient set in the action parameters, with the body mail build from the `template` field. A field `to` in `parameters` sets the recipient and a field `from`sets the sender's email address. Also the subject of the email can be set in the field `subject` in `parameters`.
 
@@ -658,6 +739,7 @@ A rule that will check if the employee has been hired in the last half hour, cou
 }
 ```
 
+## Multitenancy
 
 ## Examples of rules
 
