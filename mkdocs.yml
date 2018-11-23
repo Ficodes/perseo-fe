@@ -1,12 +1,11 @@
 site_name: Perseo Context-aware Complex Event Processing
 site_url: https://perseo.readthedocs.org
-site_description: Perseo CEP Documentation
+site_description: Documentation of the Perseo context-aware CEP FIWARE GE
 repo_url: https://github.com/Ficodes/perseo-fe/tree/newdocumentation
 theme: readthedocs
 docs_dir: documentation
 site_dir: html
 extra_css: ["https://fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_processing.css"]
-#google_analytics: ['UA-84269043-1', 'wirecloud.readthedocs.io']
 
 pages:
 - 'Introduction': 'index.md'
@@ -14,14 +13,28 @@ pages:
 - 'User Guide': 'usermanual.md'
 - 'API': 'api.md'
 - 'Testing': 'testing.md'
-- 'Legacy documentation': 'legacy.md'
+- 'Legacy documentation':
+    - 'Home': 'legacy.md' 
+    - 'Architecture': 'architecture.md'
+    - 'Installation & Administration Manual':
+      - 'Introduction': 'admin.md'
+      - 'Configuration': 'configuration.md'
+      - 'Deployment': 'deployment.md'
+      - 'Logs': 'logs.md'
+    - 'User Guide':
+      - 'Plain Rules': 'plain_rules.md'
+      - 'Models': 'models.md'
+      - 'Actions': 'pep_actions.md'
+      - 'API': 'api.md'
+      - 'Metrics API': 'metrics_api.md'
+      - 'Errors': 'errors.md'
 
 markdown_extensions:
     - markdown_github.headerid
     - markdown_github.superfences
     - markdown_github.magiclink
     - codehilite:
-        guess_lang: False
+        guess_lang: True
     - toc:
         permalink: True
         separator: "."
