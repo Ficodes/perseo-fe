@@ -14,7 +14,7 @@
 ## Operations
 
 ### Get metrics
-<!--
+
 ```
 GET /admin/metrics
 ```
@@ -71,9 +71,9 @@ Some additional remarks:
 
 * Requests corresponding to invalid services or subservices are not included in the payload (i.e. their associated metrics are just ignored).
 
--->
+
 ### Reset metrics
-<!--
+
 ```
 DELETE /admin/metrics
 ```
@@ -90,9 +90,9 @@ GET /admin/metrics?reset=true
 This operation (in fact, a variant of [get metrics](#get-metrics)) get results and, at the same time
 in an atomical way, resets metrics.
 
--->
+
 ## Metrics
-<!--
+
 The following metrics are common with other IoT platform componentes (e.g. Orion Context Broker):
 
 * **`incomingTransactions`**: number of requests consumed by Perseo. All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
@@ -137,4 +137,3 @@ The following metrics are used only by Perseo:
     * **`failedActionHttpPost`**
     * **`failedActionTwitter`**
 
--->
