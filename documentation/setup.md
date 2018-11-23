@@ -24,7 +24,7 @@ A [mongoDB 3.2](https://www.mongodb.com/) database should be working and accesib
 
 If you want to quickly deploy all the Perseo CEP components to start experimenting ASAP, do the following:
 
-- Download (or create locally) a copy of [this docker-compose.yml](../../docker-compose.yml) file.
+- Download (or create locally) a copy of [this docker-compose.yml](https://github.com/Ficodes/perseo-fe/blob/newdocumentation/docker-compose.yml) file.
 
 ```
 version: '3.4'
@@ -92,7 +92,7 @@ $ docker-compose up -d
 $ docker ps
 ``` 
 
-- Now you're ready to use Perseo as instructed in the [User & Programmer Manual](../user/index.md).
+- Now you're ready to use Perseo as instructed in the [User & Programmers Manual](usermanual.md).
 
 - When you are done experimenting, remember to teardown the compose.
 
@@ -131,7 +131,7 @@ Perseo service can be configured using the following environment variables. Plea
 | `PERSEO_NOTICES_PATH`       | `'/notices'`  | Path for incoming notices |
 | `PERSEO_RULES_PATH`         | `'/rules'`    | Path for incoming rules |
 
-* For legacy SMS and SMPP support, please refer to [this file](../legacy/configuration.md).
+* For legacy SMS and SMPP support, please refer to [this file](configuration.md).
 
 #### perseo-core
 

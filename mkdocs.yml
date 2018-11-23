@@ -10,8 +10,8 @@ extra_css: ["https://fiware.org/style/fiware_readthedocs.css", "https://www.fiwa
 pages:
 - 'Introduction': 'index.md'
 - 'Installation & Administration Manual': 'setup.md'
-- 'User Guide': 'usermanual.md'
-- 'API': 'api.md'
+- 'User & Programmers Manual': 'usermanual.md'
+- 'Event, Rules and Metric APIs': 'api.md'
 - 'Testing': 'testing.md'
 - 'Legacy documentation':
     - 'Home': 'legacy.md' 
