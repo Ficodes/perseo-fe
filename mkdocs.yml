@@ -5,6 +5,7 @@ repo_url: https://github.com/Ficodes/perseo-fe/tree/newdocumentation
 theme: readthedocs
 docs_dir: documentation
 site_dir: html
+markdown_extensions: [toc,fenced_code]
 extra_css: ["https://fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_processing.css"]
 
 pages:
@@ -30,12 +31,12 @@ pages:
       - 'Metrics API': 'metrics_api.md'
       - 'Errors': 'errors.md'
 
-markdown_extensions:
-    - markdown_github.headerid
-    - markdown_github.superfences
-    - markdown_github.magiclink
-    - codehilite:
-        guess_lang: True
-    - toc:
-        permalink: True
-        separator: "."
+#markdown_extensions:
+#    - markdown_github.headerid
+#    - markdown_github.superfences
+#    - markdown_github.magiclink
+#    - codehilite:
+#        guess_lang: True
+#    - toc:
+#        permalink: True
+#        separator: "."
