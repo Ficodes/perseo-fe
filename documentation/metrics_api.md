@@ -1,22 +1,20 @@
-#<a name="top"></a>Metrics API
+# Metrics API
 
-* [Introduction](#introduction)
-* [Operations](#operations)
-    * [Get metrics](#get-metrics)
-    * [Reset metrics](#reset-metrics)
-    * [Get and reset](#get-and-reset)
-* [Metrics](#metrics)
+- [Introduction](#introduction)
+- [Operations](#operations)
+    - [Get metrics](#get-metrics)
+    - [Reset metrics](#reset-metrics)
+    - [Get and reset](#get-and-reset)
+- [Metrics](#metrics)
 
 ## Introduction
 
-Perseo implements a REST-based API that can be used to get relevant operational metrics. 
-
-[Top](#top)
+<!-- Perseo implements a REST-based API that can be used to get relevant operational metrics. -->
 
 ## Operations
 
 ### Get metrics
-
+<!--
 ```
 GET /admin/metrics
 ```
@@ -73,17 +71,15 @@ Some additional remarks:
 
 * Requests corresponding to invalid services or subservices are not included in the payload (i.e. their associated metrics are just ignored).
 
-[Top](#top)
-
+-->
 ### Reset metrics
-
+<!--
 ```
 DELETE /admin/metrics
 ```
 
 This operation resets all metrics, as if Perseo would had just been started.
 
-[Top](#top)
 
 ### Get and reset
 
@@ -94,31 +90,19 @@ GET /admin/metrics?reset=true
 This operation (in fact, a variant of [get metrics](#get-metrics)) get results and, at the same time
 in an atomical way, resets metrics.
 
-[Top](#top)
-
+-->
 ## Metrics
+<!--
+The following metrics are common with other IoT platform componentes (e.g. Orion Context Broker):
 
-The following metrics are common with other IoT platform componentes (e.g. Orion Contex Broker):
-
-* **`incomingTransactions`**: number of requests consumed by Perseo. All kind of transactions
-  (no matter if they are ok transactions or error transactions) count for this metric.
-* **`incomingTransactionRequestSize`**: total size (bytes) in requests associated to incoming transactions
-  ("in" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions
-  or error transactions) count for this metric.
-* **`incomingTransactionResponseSize`**: total size (bytes) in responses associated to incoming transactions
-  ("out" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions
-  or error transactions) count for this metric.
+* **`incomingTransactions`**: number of requests consumed by Perseo. All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
+* **`incomingTransactionRequestSize`**: total size (bytes) in requests associated to incoming transactions ("in" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
+* **`incomingTransactionResponseSize`**: total size (bytes) in responses associated to incoming transactions ("out" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
 * **`incomingTransactionErrors`**: number of incoming transactions resulting in error.
-* **`serviceTime`**: average time to serve a transaction. All kind of transactions (no matter if they are ok
-  transactions or error transactions) count for this metric.
-* **`outgoingTransactions`**: number of requests sent by Perseo (both notifications and forward requests to CPrs).
-  All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
-* **`outgoingTransactionRequestSize`**: total size (bytes) in requests associated to outgoing transactions
-  ("out" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions
-  or error transactions) count for this metric.
-* **`outgoingTransactionResponseSize`**: total size (bytes) in responses associated to outgoing transactions
-  ("in" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions
-  or error transactions) count for this metric.
+* **`serviceTime`**: average time to serve a transaction. All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
+* **`outgoingTransactions`**: number of requests sent by Perseo (both notifications and forward requests to CPrs). All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
+* **`outgoingTransactionRequestSize`**: total size (bytes) in requests associated to outgoing transactions ("out" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
+* **`outgoingTransactionResponseSize`**: total size (bytes) in responses associated to outgoing transactions ("in" from the point of view of Perseo). All kind of transactions (no matter if they are ok transactions or error transactions) count for this metric.
 * **`outgoingTransactionErrors`**: number of outgoing transactions resulting in error.
 
 The following metrics are used only by Perseo:
@@ -153,4 +137,4 @@ The following metrics are used only by Perseo:
     * **`failedActionHttpPost`**
     * **`failedActionTwitter`**
 
-[Top](#top)
+-->
