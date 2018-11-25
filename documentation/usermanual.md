@@ -2,14 +2,6 @@
 
 This document describes how to start using Perseo. Please take into account Perseo uses Esper as rule engine, so you will need some EPL knowledge in order to create rules.
 
-## Content
-
-- [Getting started with Perseo](#getting-started-with-perseo)
-- [Perseo Rules](#perseo-rules)
-	- EPL
-	- Acciones
-- [Multitenancy](#multitenancy)  
-
 ## Getting started with Perseo
 
 From this point on we assume you have Perseo services (both front-end and core) up and running. Please refer to the [Installation Manual](setup.md) for instructions if needed. The following picture shows the more simple setting for Perseo. It is made up of just Perseo and a single instance of Orion Context Broker.
