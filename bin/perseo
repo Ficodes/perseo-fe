@@ -77,6 +77,7 @@ function loadConfiguration() {
         'PERSEO_SMTP_SECURE',
         'PERSEO_SMTP_AUTH_USER',
         'PERSEO_SMTP_AUTH_PASS',
+        'PERSEO_SMTP_TLS_REJECTUNAUTHORIZED',
         'PERSEO_SMS_URL',
         'PERSEO_SMS_API_KEY',
         'PERSEO_SMS_API_SECRET',
@@ -146,6 +147,7 @@ function loadConfiguration() {
     config.smtp.port = process.env.PERSEO_SMTP_PORT || config.smtp.port;
     config.smtp.host = process.env.PERSEO_SMTP_HOST || config.smtp.host;
     config.smtp.tls = config.smtp.tls || {};
+    //TODO solve problem with duplicated env var after merge PERSEO_SMTP_TLS_REJECTUNAUTHORIZED
     config.smtp.tls.rejectUnauthorized = getNormalizedBoolVar('PERSEO_SMTP_VERIFY_CA',
                                                              config.smtp.tls.rejectUnauthorized);
 
@@ -159,7 +161,13 @@ function loadConfiguration() {
     else {
         delete config.smtp.auth;
     }
-
+    // TODO Conflict. PERSEO_SMTP_TLS_REJECTUNAUTHORIZED(telefonica) VS PERSEO_SMTP_VERIFY_CA(ficodes)
+    // different solutions 4 same objective
+    // if (process.env.PERSEO_SMTP_TLS_REJECTUNAUTHORIZED === 'true') {
+    //     config.smtp.tls.rejectUnauthorized = true;
+    // } else if (process.env.PERSEO_SMTP_TLS_REJECTUNAUTHORIZED === 'false') {
+    //     config.smtp.tls.rejectUnauthorized = false;
+    // }
     config.sms = config.sms || {};
     config.sms.URL = process.env.PERSEO_SMS_URL || config.sms.URL;
     config.sms.API_KEY = process.env.PERSEO_SMS_API_KEY || config.sms.API_KEY;

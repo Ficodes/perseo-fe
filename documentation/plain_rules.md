@@ -31,13 +31,13 @@ The field `action` can be also an array of "actions", objects with the same stru
 ## EPL text
 The field ```text``` of the rule must be a valid EPL statement and additionally must honor several restrictions to match expectations of perseo and perseo-core.
 
-EPL is documented in [Esper website](http://www.espertech.com/esper/esper-documentation), in particular [version 5.5.0](http://esper.espertech.com/release-5.5.0/esper-reference/html/index.html).
+EPL is documented in [Esper website](http://www.espertech.com/esper/esper-documentation), in particular [version 6.1.0](http://esper.espertech.com/release-6.1.0/esper-reference/html/index.html).
 
 A EPL statement to use with perseo could be:
 
 ```
 select *, "blood_rule_update" as ruleName,
-	 ev.BloodPressure? as Pressure, ev.id? as Meter
+         ev.BloodPressure? as Pressure, ev.id? as Meter
 from pattern
  [every ev=iotEvent(cast(cast(BloodPressure?,String),float)>1.5 and type="BloodMeter")]
 ```
@@ -162,6 +162,7 @@ The `parameters` map includes the following fields:
     * **name**: *mandatory*, attribute name to set
     * **value**: *mandatory*, attribute value to set
     * type: optional, type of the attribute to set. By default, not set (in which case, only the attribute value is changed).
+* actionType: optional, type of CB action: APPEND or UPDATE. By default is APPEND.
 * trust: optional, trust token for getting an access token from Auth Server which can be used to get to a Context Broker behind a PEP.
 
 
@@ -176,7 +177,8 @@ The `parameters` map includes the following fields:
                     "type":"boolean",
                     "value":"true"
                 }
-            ]
+            ],
+            "actionType": "UPDATE"
         }
     }
 ```
@@ -309,7 +311,7 @@ The metadata in an event/notice like
               }]
             }
           },
-		{
+                {
             "name" : "TimeInstant",
             "type" : "urn:x-ogc:def:trs:IDAS:1.0:ISO8601",
             "value" : "2014-04-29T13:18:05Z"
