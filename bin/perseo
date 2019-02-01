@@ -142,9 +142,6 @@ function loadConfiguration() {
     if (process.env.PERSEO_ORION_URL) {
         config.orion.URL = new URL(process.env.PERSEO_ORION_URL);
     }
-    if (process.env.PERSEO_LOG_LEVEL) {
-        config.logLevel = process.env.PERSEO_LOG_LEVEL;
-    }
 
     // SMTP Config
     config.smtp = config.smtp || {};

@@ -22,7 +22,6 @@
  *
  * Created by: Carlos Blanco - Future Internet Consulting and Development Solutions (FICODES)
  */
-
 'use strict';
 
 var rewire = require('rewire');

@@ -38,7 +38,7 @@ describe('Metrics', function() {
     afterEach(testEnv.commonAfterEach);
 
     describe('#PostAction()', function() {
-        it('should count fired valid actions', function(done) {
+       it('should count fired valid actions', function(done) {
             var cases = utilsT.loadDirExamples('./test/data/good_actions');
             metrics.GetDecorated(true); // reset metrics
             async.eachSeries(cases, function(c, callback) {

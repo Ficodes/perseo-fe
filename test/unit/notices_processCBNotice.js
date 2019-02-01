@@ -22,7 +22,6 @@
  *
  * Created by: Carlos Blanco - Future Internet Consulting and Development Solutions (FICODES)
  */
-
 'use strict';
 
 var rewire = require('rewire');
@@ -332,7 +331,6 @@ describe('Notices NGSIv1', function() {
                     expect(noticeResult[attrKey]).to.equal(attrValue);
                     expect(noticeResult[attrKey + '__metadata__' + at]).to.equal(locValue);
                     expect(noticeResult[attrKey + '__metadata__' + at + '__type']).to.equal(locType);
-
                     expect(noticeResult[attrKey + '__lat']).to.equal(lat);
                     expect(noticeResult[attrKey + '__lon']).to.equal(long);
                     expect(noticeResult[attrKey + '__x']).to.equal(x);
