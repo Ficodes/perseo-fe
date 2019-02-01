@@ -2,35 +2,96 @@
 
 This document describes how to start using Perseo. Please take into account Perseo uses Esper as rule engine, so you will need some EPL knowledge in order to create rules.
 
-## Content
-
--   [Getting started with Perseo](#Getting started with Perseo)
-- Qué necesito para funcionar?
-- Cómo conecto con Orion para que me notifique?
-- Cómo creo reglas en perseo?
--  [Perseo Rules](#Perseo Rules)
-	- EPL
-	- Acciones
--   
-
 ## Getting started with Perseo
 
-From this point on we assume you have Perseo services (both front-end and core) running. Please refer to the [Installation Manual](setup.md) for instructions if needed.
-
-Picture 1 shows the more simple scene 
+From this point on we assume you have Perseo services (both front-end and core) up and running. Please refer to the [Installation Manual](setup.md) for instructions if needed. The following picture shows the more simple setting for Perseo. It is made up of just Perseo and a single instance of Orion Context Broker.
 
 ![Perseo simplest scene](images/Perseo-GettingStarted.png)
 
-The first step to take is to shave Perseo subscribed to one o more instances of Orion Context Broker, to get notified when that context data you are interested in changes. Perseo is fully NGSIv2 compatible, so you can post a message like this one:
+The link between Perseo and Orion is established through a NGSI subscription that has to be created in advance. So once we have all components of the setting ready to be used, the first step to take is to have Perseo subscribed to changes on entities of one or more instances of Orion Context Broker, to get notified when that context data you are interested in actually changes. Perseo is fully NGSIv2 compatible, so you will need to post a message like next one to perform notification configuration:
 
-```json
-{}
+```http
+POST http://<ContextBrokerURL>/v2/subscriptions HTTP/1.1
+Fiware-Service: ficodes
+Fiware-ServicePath: /demo/fiwaresummit18
+Content-Type: application/json
 ```
 
+```json
+{
+  "description": "Notify Perseo when OLCtemperature change",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": ".*",
+        "type": "Streetlight"
+      }
+    ],
+    "condition": {
+      "attrs": [
+        "OLCtemperature"
+      ],
+      "expression":  {
+         "q": "OLCtemperature>30"
+      }
+    }
+  },
+  "notification": {
+    "http": {
+      "url": "http://<perseoURL>:9090/notices"
+    },
+    "attrs": [
+        "OLCtemperature",
+        "status"
+    ]
+  },
+  "expires": "2019-06-30T14:00:00.00Z"
+}
+```
 
-  
+NGSI subscriptions are thoroughly explained in [Orion documentation](https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html#subscriptions). Let's see important things to notice from the subscription:
+
+```
+	POST http://<ContextBrokerURL>/v2/subscriptions HTTP/1.1
+```
+
+The first header indicates you have to make a `POST` request to the `<ContextBrokerURL>` valid URL, followed by `/v2/subscription` (remember we are using NGSIv2!). You can use [Postman](https://www.getpostman.com/) or any other similar tool to perform HTTP requests to APIs straightforwardly. 
+
+Next, you have to set the tenant you want to use. Perseo supports the [multi-tenancy model](https://fiware-orion.readthedocs.io/en/master/user/multitenancy/index.html) implemented by Orion and takes advantage of it. See [Multitenancy](#Multitenancy) section for more info.
+
+```
+Fiware-Service: ficodes
+Fiware-ServicePath: /demo/fiwaresummit18
+```
+
+The `Fiware-Service` header identifies the service/tenant to be used. In this example, we are using the `ficodes` tenant. If this header is missing, the default tenant will be used. The `Fiware-ServicePath` header defines the scope from which we want to listen to events. Again, please read the Orion's [multi-tenancy model](https://fiware-orion.readthedocs.io/en/master/user/multitenancy/index.html) documentation if this is the first time you are dealing with this.
+
+Regarding the payload of the message:
+
+- The `url` field of the subscription specifies where Orion will send the notifications. This must be `/notices` endpoint. Perseo listens at port `9090` by default, but take into account you can configure any other port if you wish.
+- Notifications must come in complete NGSI JSON Entity Representation form. That means please do not use options like `"attrsFormat": "keyValues"`
+- The `entities` array allows you to set one or more entity types to listen to their changes. You can populate the array with as much json objects as you may need. Use the `type` field with the proper value for the needed entity.
+- Did you know you can also make use of the `condition` object to filter notifications to be sent to Perseo?
+
+```json
+"condition": {
+      "attrs": [
+        "OLCtemperature"
+      ],
+      "expression":  {
+         "q": "OLCtemperature>30"
+      }
+}
+```
+
+The previous snippet will tell Orion not to notify Perseo unless the value of the OLCtemperature attribute is higher that 30 centrigrade degrees. This is a very good way to complement your rules to perform some filtering.
+
 
 ## Perseo Rules
+
+This section shows how to leverage the rules used by Perseo, what they look like, and what their proper syntax is.
+
+### Basic structure
 
 Perseo rules follow a simple JSON structure made up of three mandatory *key-value* fields: **`name`**, **`text`**, and **`action`**. The structure of these rules is sketched in the following JSON code:
 
@@ -70,8 +131,7 @@ from pattern
      [every ev=iotEvent(cast(cast(BloodPressure?,String),float)>1.5 and type="BloodMeter")]
 ```
 
-You will find more examples of valid rules in the [Examples of rules]() section.
-
+You will find more examples of valid rules in the [Examples of rules](#examples-of-rules) section.
 
 
 ### Actions
@@ -119,7 +179,7 @@ An action whose `type`is `sms` will send a SMS to the mobile number set in the `
 
 As shown in the example, is it possible to perform [attribute substitution](#string-substitution-syntax).
 
-#### Send an email
+#### Sending an email
 
 Sends an email to the recipient set in the action parameters, with the body mail build from the `template` field. A field `to` in `parameters` sets the recipient and a field `from`sets the sender's email address. Also the subject of the email can be set in the field `subject` in `parameters`.
 
@@ -137,7 +197,8 @@ Sends an email to the recipient set in the action parameters, with the body mail
 
 The `template`, `from`, `to` and `subject` fields perform [string substitution](#string-substitution-syntax).
 
-#### update attribute action
+#### Updating an attribute in the context broker
+
 Updates one or more attributes of a given entity (in the Context Broker instance specified in the Perseo configuration). 
 The `parameters` map includes the following fields:
 
@@ -175,9 +236,11 @@ First time an update action using trust token is triggered, Perseo interacts wit
 It could happen (in theory) that a just got auth token also produce a 401 Not authorized, however this would be an abnormal situation: Perseo logs the problem with the update but doesn't try to get a new one from Keystone. Next time Perseo triggers the action, the process may repeat, i.e. first update attemp fails with 401, Perseo requests a fresh auth token to Keystone, the second update attemp fails with 401, Perseo logs the problem and doesn't retry again.
 
 
-#### HTTP request action
-Makes an HTTP request to an URL specified in `url` inside `parameters`, sending a body built from `template`. 
-The `parameters` field can specify
+#### Performing a HTTP request
+
+This kinf of action makes an HTTP request to an URL specified in `url` inside `parameters`, sending a body built from `template`. 
+The `parameters` field can specify:
+
 * method: *optional*, HTTP method to use, POST by default
 * **url**: *mandatory*, URL target of the HTTP method
 * headers: *optional*, an object with fields and values for the HTTP header
@@ -247,9 +310,9 @@ or use the `json` parameter
 The `template` and `url` fields and both the field names and the field values of `qs` and `headers` and `json`
 perform [string substitution](#string-substitution-syntax).
 
-#### twitter action
+#### Tweeting a message
 
-Updates the status of a twitter account, with the text build from the `template` field. The field `parameters` must contain the values for the consumer key and secret and the access token key and access token secret of the pre-provisioned application associated to the twitter user.
+This kind of action updates the status of a twitter account, with the text build from the `template` field. The field `parameters` must contain the values for the consumer key and secret and the access token key and access token secret of the pre-provisioned application associated to the twitter user.
 
 ```json
  "action": {
@@ -286,7 +349,7 @@ This substitution mechanism can be used in the the following fields:
 * `id`, `type`, `name`, `value`, `ìsPattern` for `update` action
 
 
-### Metadata and object values
+#### Metadata and object values
 
 Metadata values can be accessed by adding the suffix `__metadata__x` to the attribute name, being `x` the name of the 
 metadata attribute. This name can be used in the EPL text of the rule and in the parameters of the action which accept 
@@ -359,7 +422,7 @@ double underscore prefix, so an attribute `x` with fields `a`, `b`, `c`, will al
 Note: be aware of the difference between the key `metadatas` used in the context broker notificacions (v1), ending in `s`
  and the infix `metadata`, without the final `s`, used to access fields from EPL and actions. 
  
-### Location fields
+#### Location fields
 
 Fields with geolocation info with the formats recognized by NGSI v1, are parsed and generate two pairs of 
 pseudo-attributes, the first pair is for the latitude and the longitude and the second pair is for the x and y 
@@ -367,7 +430,8 @@ UTMC coordinates for the point. These pseudo-attributes ease the use of the posi
 These derived attributes have the same name of the attribute with a suffix of `__lat` and `__lon` , and `__x` and 
 `__y` respectively.
 
-The formats are 
+The formats are:
+ 
 * [NGSV1 deprecated format](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Publish/Subscribe_Broker_-_Orion_Context_Broker_-_User_and_Programmers_Guide_R3#Defining_location_attribute)
 * [NGSIV1 current format](https://github.com/telefonicaid/fiware-orion/blob/master/doc/manuals/user/geolocation.md#defining-location-attribute)
 
@@ -498,7 +562,8 @@ of Cuenca and `d` the distance of 5 000 m.
 Note: for long distances the precision of the computations and the distortion of the projection can introduce some degree 
 of inaccuracy.
 
-### Time fields
+#### Time fields
+
 Some attributes and metadata, supposed to contain a time in ISO8601 format, will generate a pseudo-attribute with the 
 same name as the attribute (or metadata field) and a suffix "__ts", with the parsed value as milliseconds for Unix epoch. 
 This value makes easier to write the EPL text which involves time comparisons. The fields (attribute or metadata) supposed 
@@ -671,6 +736,7 @@ A rule that will check if the employee has been hired in the last half hour, cou
 }
 ```
 
+## Multitenancy
 
 ## Examples of rules
 
