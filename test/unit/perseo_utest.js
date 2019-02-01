@@ -32,7 +32,7 @@ describe('Perseo', function() {
             var logWarnMock = sinon.spy(function() {});
             var logInfoMock = sinon.spy(function() {});
             var setLevelMock = sinon.spy(function() {});
-            var config = sinon.spy(function() {return {}});
+            var config = sinon.spy(function() {return {};});
 
             // Set Log level
             process.env.PERSEO_LOG_LEVEL = invalidLevel;
