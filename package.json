@@ -1,7 +1,7 @@
 {
   "name": "perseo",
   "description": "IOT CEP front End",
-  "version": "1.6.0-next",
+  "version": "1.7.0-next",
   "homepage": "",
   "author": {
     "name": "crbrox",
@@ -16,48 +16,44 @@
   },
   "main": "bin/perseo",
   "engines": {
-    "node": ">=4.8.4"
+    "node": ">=8.12.0"
   },
   "scripts": {
-    "test": "grunt"
+    "clean": "rm -rf package-lock.json && rm -rf node_modules && rm -rf coverage",
+    "test": "mocha --recursive 'test/**/*.js' --reporter spec --timeout 3000 --ui bdd --exit",
+    "test:watch": "npm run test -- -w ./lib",
+    "lint": "jshint lib/ --config .jshintrc && jshint test/ --config test/.jshintrc",
+    "test:coverage": "istanbul cover _mocha -- --recursive 'test/**/*.js' --reporter spec --exit",
+    "test:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "watch": "watch 'npm test && npm run lint' ./lib ./test"
   },
   "devDependencies": {
+    "coveralls": "~3.0.2",
+    "istanbul": "~0.4.5",
+    "jshint": "~2.9.6",
+    "mocha": "5.2.0",
     "chai": "~4.1.2",
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-jshint": "~0.6.4",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-dox": "~0.5.0",
-    "grunt-exec": "~0.4.0",
-    "grunt-githooks": "^0.6.0",
-    "grunt-github-pages": "~0.0.3",
-    "grunt-gjslint": "~0.1.0",
-    "grunt-mkdir": "~0.1.1",
-    "grunt-mocha-test": "^0.13.3",
-    "grunt-plato": "~0.2.0",
-    "istanbul": "^0.4.5",
-    "mocha": "~1.13.0",
-    "proxyquire": "2.0.1",
-    "rewire": "^4.0.1",
+    "proxyquire": "0.5.1",
+    "rewire": "~4.0.1",
     "should": "8.2.2",
+    "watch": "~1.0.2",
     "sinon": "~6.1.0",
-    "sinon-chai": "3.2.0"
+    "sinon-chai": "~3.2.0"
   },
   "keywords": [],
   "dependencies": {
-    "async": "^0.9.0",
-    "body-parser": "^1.5.2",
-    "closure-linter-wrapper": "^0.2.11",
-    "express": "^4.7.2",
-    "logops": "1.0.0-alpha.7",
-    "mongodb": "^2.2.19",
-    "ngsijs": "^1.2.0",
-    "nodemailer": "^4.6.7",
-    "nodemailer-smtp-transport": "^2.7.4",
-    "request": "^2.87.0",
-    "smpp": "0.3.1",
-    "twitter": "^1.2.5",
-    "utm-converter": "^0.1.1",
-    "uuid": "^1.4.1"
+    "async": "~0.9.2",
+    "body-parser": "~1.18.2",
+    "express": "~4.16.1",
+    "logops": "2.1.0",
+    "mongodb": "~2.2.31",
+    "ngsijs": "~1.2.0",
+    "nodemailer": "~1.11.0",
+    "nodemailer-smtp-transport": "~0.1.13",
+    "request": "~2.83.0",
+    "twitter": "~1.7.1",
+    "utm-converter": "~0.1.1",
+    "uuid": "~1.4.2",
+    "smpp": "0.3.1"
   }
 }

@@ -19,6 +19,8 @@
  *
  * For those usages not covered by the GNU Affero General Public License
  * please contact with iot_support at tid dot es
+ *
+ * Modified by: Carlos Blanco - Future Internet Consulting and Development Solutions (FICODES)
  */
 
 'use strict';
@@ -87,8 +89,8 @@ describe('Rules', function() {
                 }
             ], done);
         });
-        it('should add ruleName automatically when the rule does not include "rule as ruleName"', function(done) {
-            var rule = utilsT.loadExample('./test/data/good_rules/nrn_rule_post.json');
+        it('should add ruleName automatically when the rule text does not include "rule as ruleName"', function(done) {
+            var rule = utilsT.loadExample('./test/data/good_rules/no_ruleName_in_text_rule_post.json');
             async.series([
                 function(callback) {
                     clients.PostRule(rule, function(error, data) {
@@ -104,7 +106,61 @@ describe('Rules', function() {
                         data.should.have.property('body');
                         data.body.should.have.property('data');
                         data.body.data.should.have.property('text',
-                            'select "x_post_auto" as ruleName, *, ev.xPressure? as Pression, ev.id? as Meter from pattern [every ev=iotEvent(cast(cast(xPressure?,String),float)>1.5 and type="xMeter")]');
+                            'select "x_post_auto" as ruleName, *, ev.xPressure? as Pression, ev.id? as Meter from ' +
+                            'pattern [every ev=iotEvent(cast(cast(xPressure?,String),float)>1.5 and type="xMeter")]');
+                        data.body.data.should.have.property('name', rule.name);
+
+                        return callback();
+                    });
+                }
+            ], done);
+        });
+        it('should preserve user ruleName', function(done) {
+            var rule = utilsT.loadExample('./test/data/good_rules/blood_rule_post.json');
+            async.series([
+                function(callback) {
+                    clients.PostRule(rule, function(error, data) {
+                        should.not.exist(error);
+                        data.should.have.property('statusCode', 200);
+                        return callback(null);
+                    });
+                },
+                function(callback) {
+                    clients.GetRule(rule.name, function(error, data) {
+                        should.not.exist(error);
+                        data.should.have.property('statusCode', 200);
+                        data.should.have.property('body');
+                        data.body.should.have.property('data');
+                        data.body.data.should.have.property('text',
+                            'select *,\"blood_post\" as ruleName,ev.BloodPressure? as Pression, ev.id? as Meter from' +
+                            ' pattern [every ev=iotEvent(cast(cast(BloodPressure?,String),float)>1.5 and ' +
+                            'type=\"BloodMeter\")]');
+                        data.body.data.should.have.property('name', rule.name);
+
+                        return callback();
+                    });
+                }
+            ], done);
+        });
+        it('should preserve user incorrect ruleName', function(done) {
+            var rule = utilsT.loadExample('./test/data/bad_rules/rule_bad_ruleName_text_rule_post.json');
+            async.series([
+                function(callback) {
+                    clients.PostRule(rule, function(error, data) {
+                        should.not.exist(error);
+                        data.should.have.property('statusCode', 200);
+                        return callback(null);
+                    });
+                },
+                function(callback) {
+                    clients.GetRule(rule.name, function(error, data) {
+                        should.not.exist(error);
+                        data.should.have.property('statusCode', 200);
+                        data.should.have.property('body');
+                        data.body.should.have.property('data');
+                        data.body.data.should.have.property('text',
+                            'select *, "badRuleleName" as ruleName, ev.xPressure? as Pression, ev.id? as Meter from' +
+                            ' pattern [every ev=iotEvent(cast(cast(xPressure?,String),float)>1.5 and type="xMeter")]');
                         data.body.data.should.have.property('name', rule.name);
 
                         return callback();

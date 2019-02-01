@@ -1,10 +1,8 @@
 language: node_js
 
 node_js:
- - "6" # npm-shrinkwrap.json required in Node 6
  - "8"
  - "10"
- - "lts/*"
 
 branches:
   only:
@@ -25,4 +23,9 @@ install:
 
 before_install:
  - npm update -q
- - npm install -g grunt-cli
+
+before_script:
+ - npm run lint
+
+after_script:
+  - npm run test:coveralls

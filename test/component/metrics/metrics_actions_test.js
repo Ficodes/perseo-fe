@@ -38,7 +38,7 @@ describe('Metrics', function() {
     afterEach(testEnv.commonAfterEach);
 
     describe('#PostAction()', function() {
-       it('should count fired valid actions', function(done) {
+        it('should count fired valid actions', function(done) {
             var cases = utilsT.loadDirExamples('./test/data/good_actions');
             metrics.GetDecorated(true); // reset metrics
             async.eachSeries(cases, function(c, callback) {
@@ -180,7 +180,7 @@ describe('Metrics', function() {
                 }
             ], done);
         });
-        /*it('should increment a failed for update', function(done) {
+        it('should increment a failed for update', function(done) {
             var rule = utilsT.loadExample('./test/data/good_rules/blood_rule_update.json'),
                 action = utilsT.loadExample('./test/data/good_actions/action_update.json');
             utilsT.getConfig().orion.URL = new URL('http://inventedurl.notexists.com');
@@ -212,11 +212,11 @@ describe('Metrics', function() {
                             should.equal(m.services.unknownt.sum.outgoingTransactions, 1);
                             should.equal(m.services.unknownt.sum.outgoingTransactionsErrors, 1);
                             return callback();
-                        }, 50);
+                        }, 150);
                     });
                 }
             ], done);
-        });*/
+        });
 
         it('should increment successful post', function(done) {
             var rule = utilsT.loadExample('./test/data/good_rules/blood_rule_post.json'),
@@ -299,7 +299,7 @@ describe('Metrics', function() {
         //
         // it('should increment successful email', function(done) {...}
 
-        /*it('should increment error for failed email', function(done) {
+        it('should increment error for failed email', function(done) {
             var rule = utilsT.loadExample('./test/data/good_rules/blood_rule_email.json'),
                 action = utilsT.loadExample('./test/data/good_actions/action_email.json');
             utilsT.getConfig().smtp.host = 'averyfarwayhosthatnotexist';
@@ -336,7 +336,7 @@ describe('Metrics', function() {
                     });
                 }
             ], done);
-        });*/
+        });
 
     });
 });

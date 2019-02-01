@@ -75,6 +75,10 @@ This project is part of [FIWARE](https://fiware.org/) and has been rated as foll
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Performance&url=https://fiware.github.io/catalogue/json/perseo.json&query=$.performance&colorB=blue)
     ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Stability&url=https://fiware.github.io/catalogue/json/perseo.json&query=$.stability&colorB=blue)
 
+## Roadmap
+| :dart: [Roadmap](documentation/roadmap.md) |
+|---|
+
 ## More Information
 
 - Refer to the [Esper Reference Documentation](http://esper.espertech.com/release-6.1.0/esper-reference/html/index.html) for info on how to use EPL as a rule language.

@@ -59,8 +59,9 @@ cp -R %{_srcdir}/lib \
       %{_srcdir}/bin \
       %{_srcdir}/config.js \
       %{_srcdir}/package.json \
-      %{_srcdir}/npm-shrinkwrap.json \
       %{_build_root_project}
+
+[ -f %{_srcdir}/npm-shrinkwrap.json ] && /bin/cp %{_srcdir}/npm-shrinkwrap.json %{_build_root_project}
 
 cp -R %{_topdir}/SOURCES/etc %{buildroot}
 
@@ -71,9 +72,9 @@ cp -R %{_topdir}/SOURCES/etc %{buildroot}
 echo "[INFO] Building RPM"
 cd %{_build_root_project}
 
-# Only production modules
+# Only production modules. We have found that --force is required to make this work for Node v8
 rm -fR node_modules/
-npm cache clear
+npm cache clear --force
 npm install --production
 
 # -------------------------------------------------------------------------------------------- #
@@ -161,6 +162,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_install_dir}
 
 %changelog
+* Thu Sep 20 2018 Fermin Galan <fermin.galanmarquez@telefonica.com> 1.7.0
+- Add: new parameter to updateAction card: actionType: APPEND (default) or UPDATE (#278)
+- Using precise dependencies (~=) in packages.json
+- Provide default value (false) for tls.rejectUnauthorized config option (#272, partially)
+
 * Wed Oct 18 2017 Fermin Galan <fermin.galanmarquez@telefonica.com> 1.6.0
 - FEATURE update node version to 4.8.4
 - Fixed timer leak in HA-refresh scenarios [#253]

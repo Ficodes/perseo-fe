@@ -1,3 +1,28 @@
+/*
+ * Copyright 2015 Telefonica Investigación y Desarrollo, S.A.U
+ *
+ * This file is part of perseo-fe
+ *
+ * perseo-fe is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * perseo-fe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with perseo-fe.
+ * If not, see http://www.gnu.org/licenses/.
+ *
+ * For those usages not covered by the GNU Affero General Public License
+ * please contact with::[contacto@tid.es]
+ *
+ * Created by: Carlos Blanco - Future Internet Consulting and Development Solutions (FICODES)
+ */
+
 'use strict';
 
 var rewire = require('rewire');
@@ -542,8 +567,10 @@ describe('Notices NGSIv2', function() {
                 expect(e).exist;
                 expect(request).not.exist;
                 expect(e.httpCode).to.equal(400);
-                expect(e.message[0]).to.equal('Invalid DateTime attribute metadata: datetime is not valid 2018-96-03T09:31:26.296Z');
-                expect(e.message[1]).to.equal('Invalid DateTime attribute: datetime is not valid 2018-08-32T09:31:26.296Z');
+                expect(e.message[0]).to.equal('Invalid DateTime attribute metadata: datetime' +
+                    ' is not valid 2018-96-03T09:31:26.296Z');
+                expect(e.message[1]).to.equal('Invalid DateTime attribute: datetime' +
+                    ' is not valid 2018-08-32T09:31:26.296Z');
             };
             noticeExample.data = [
                 {

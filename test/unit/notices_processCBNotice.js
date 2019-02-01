@@ -1,3 +1,28 @@
+/*
+ * Copyright 2015 Telefonica Investigación y Desarrollo, S.A.U
+ *
+ * This file is part of perseo-fe
+ *
+ * perseo-fe is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * perseo-fe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with perseo-fe.
+ * If not, see http://www.gnu.org/licenses/.
+ *
+ * For those usages not covered by the GNU Affero General Public License
+ * please contact with::[contacto@tid.es]
+ *
+ * Created by: Carlos Blanco - Future Internet Consulting and Development Solutions (FICODES)
+ */
+
 'use strict';
 
 var rewire = require('rewire');
@@ -88,7 +113,7 @@ describe('Notices NGSIv1', function() {
                 expect(noticeResult.type).to.equal(type);
                 expect(noticeResult.subservice).to.equal(subservice);
                 expect(noticeResult.service).to.equal(service);
-                expect(noticeResult.isPattern).to.equal('false'); // why not boolean??
+                expect(noticeResult.isPattern).to.equal('false');
                 expect(noticeResult[attrKey + '__type']).to.equal(attrType);
                 expect(noticeResult[attrKey]).to.equal(attrValue);
                 done();
@@ -159,7 +184,7 @@ describe('Notices NGSIv1', function() {
                 expect(noticeResult.type).to.equal(type);
                 expect(noticeResult.subservice).to.equal(subservice);
                 expect(noticeResult.service).to.equal(service);
-                expect(noticeResult.isPattern).to.equal('false'); // why not boolean??
+                expect(noticeResult.isPattern).to.equal('false');
                 expect(noticeResult[attrKey + '__type']).to.equal(dateType);
                 expect(noticeResult[attrKey]).to.equal(dateValue);
                 expect(noticeResult[attrKey + '__ts']).to.equal(1528018286296);
@@ -194,7 +219,7 @@ describe('Notices NGSIv1', function() {
                 expect(noticeResult.type).to.equal(type);
                 expect(noticeResult.subservice).to.equal(subservice);
                 expect(noticeResult.service).to.equal(service);
-                expect(noticeResult.isPattern).to.equal('false'); // why not boolean??
+                expect(noticeResult.isPattern).to.equal('false');
                 expect(noticeResult[attrKey + '__type']).to.equal(attrType);
                 expect(noticeResult[attrKey]).to.equal(attrValue);
                 expect(noticeResult[attrKey + '__metadata__' + at + '__type']).not.exist;
@@ -302,21 +327,16 @@ describe('Notices NGSIv1', function() {
                     expect(noticeResult.type).to.equal(type);
                     expect(noticeResult.subservice).to.equal(subservice);
                     expect(noticeResult.service).to.equal(service);
-                    expect(noticeResult.isPattern).to.equal('false'); // why not boolean??
+                    expect(noticeResult.isPattern).to.equal('false');
                     expect(noticeResult[attrKey + '__type']).to.equal(attrType);
                     expect(noticeResult[attrKey]).to.equal(attrValue);
                     expect(noticeResult[attrKey + '__metadata__' + at]).to.equal(locValue);
                     expect(noticeResult[attrKey + '__metadata__' + at + '__type']).to.equal(locType);
 
-                    // This attributes not should be metadata???
                     expect(noticeResult[attrKey + '__lat']).to.equal(lat);
                     expect(noticeResult[attrKey + '__lon']).to.equal(long);
                     expect(noticeResult[attrKey + '__x']).to.equal(x);
                     expect(noticeResult[attrKey + '__y']).to.equal(y);
-                    //expect(noticeResult[attrKey + '__metadata__' + at + '__lat']).to.equal(lat);
-                    //expect(noticeResult[attrKey + '__metadata__' + at + '__lon']).to.equal(long);
-                    //expect(noticeResult[attrKey + '__metadata__' + at + '__x']).to.equal(x);
-                    //expect(noticeResult[attrKey + '__metadata__' + at + '__y']).to.equal(y);
 
                     // Why call parselocation with the attribute value and not with location metadata attribute?
                     parseLocationMock.should.have.been.calledWith(attrValue);
@@ -325,49 +345,6 @@ describe('Notices NGSIv1', function() {
                 });
             }
         );
-        // why NGSIv1 dont parse metadata geo:points? only parseocation when 'name' is 'location'.
-        // it('should accept notice using geo:point metadata type', function(done) {
-        //
-        //     var at = 'theMetaAttribute';
-        //     var parseLocationMock = sinon.spy(function() {
-        //         return {
-        //             lat: lat,
-        //             lon: long,
-        //             x: x,
-        //             y: y
-        //         };
-        //     });
-        //     notices.__with__({
-        //         'uuid.v1': uuidMock,
-        //         'Date.now': dateNowMock,
-        //         'parseLocation': parseLocationMock
-        //     })(function () {
-        //         noticeExample.contextResponses[0].contextElement.attributes[0].metadatas = [{
-        //             'name':  at,
-        //             'value': locValue,
-        //             'type': locType
-        //         }];
-        //         var noticeResult = processCBNotice(service, subservice, noticeExample, 0);
-        //         expect(noticeResult.noticeId).to.equal(mockedUid);
-        //         expect(noticeResult.noticeTS).to.equal(mockedDateMilis);
-        //         expect(noticeResult.id).to.equal(id);
-        //         expect(noticeResult.type).to.equal(type);
-        //         expect(noticeResult.subservice).to.equal(subservice);
-        //         expect(noticeResult.service).to.equal(service);
-        //         expect(noticeResult.isPattern).to.equal('false'); // why not boolean??
-        //         expect(noticeResult[attrKey + '__type']).to.equal(attrType);
-        //         expect(noticeResult[attrKey]).to.equal(attrValue);
-        //         expect(noticeResult[attrKey + '__metadata__' + at]).to.equal(locValue);
-        //         expect(noticeResult[attrKey + '__metadata__' + at + '__type']).to.equal(locType);
-        //         expect(noticeResult[attrKey + '__metadata__' + at + '__lat']).to.equal(lat);
-        //         expect(noticeResult[attrKey + '__metadata__' + at + '__lon']).to.equal(long);
-        //         expect(noticeResult[attrKey + '__metadata__' + at + '__x']).to.equal(x);
-        //         expect(noticeResult[attrKey + '__metadata__' + at + '__y']).to.equal(y);
-        //         parseLocationMock.should.have.been.calledWith(locValue);
-        //         parseLocationMock.should.be.calledOnce;
-        //         done();
-        //     });
-        // });
 
         it('should catch correctly errors',
             function(done) {
