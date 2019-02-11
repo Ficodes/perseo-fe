@@ -1,3 +1,28 @@
+/*
+ * Copyright 2015 Telefonica Investigación y Desarrollo, S.A.U
+ *
+ * This file is part of perseo-fe
+ *
+ * perseo-fe is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * perseo-fe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with perseo-fe.
+ * If not, see http://www.gnu.org/licenses/.
+ *
+ * For those usages not covered by the GNU Affero General Public License
+ * please contact with iot_support at tid dot es
+ *
+ * Created by: Carlos Blanco - Future Internet Consulting and Development Solutions (FICODES)
+ */
+
 'use strict';
 
 var should = require('should');
@@ -6,572 +31,395 @@ var updateAction = rewire('../../lib/models/updateAction.js');
 var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
-var expect = chai.expect;
 chai.Should();
 chai.use(sinonChai);
 
-var noticeExampleV1 = JSON.stringify({
-    'subscriptionId': '5b34e37052a01bc4c7e67c34',
-    'originator': 'localhost',
-    'contextResponses': [
-        {
-            'contextElement': {
-                'type': 'tipeExample1',
-                'isPattern': 'false',
-                'id': 'sensor-1',
-                'attributes': [
-                    {
-                        'name': 'Attr1',
-                        'type': 'Number',
-                        'value': '123'
-                    }
-                ]
-            }
-        }
-    ],
-    'subservice': '/test/notices/unit',
-    'service': 'utest'
-});
-
-var noticeExampleV2 =  JSON.stringify({
-    'subscriptionId': '5b311ccb29adb333f843b5f3',
-    'data': [
-        {
-            'id': 'sensorv2-1',
-            'type': 'tipeExamplev21',
-            'Attr1': {
-                'type': 'Number',
-                'value': 122,
-                'metadata': {}
-            }
-        }
-    ],
-    'subservice': '/test/notices/unitv2',
-    'service': 'utestv2'
-});
-
-// Core mocks
-var coreNotice1 = {
-    'id': 'ent1',
-    'type': 'Room',
-    'service': 'utest',
-    'subservice': '/test/notices/unit'
+var metaExample = {
+    timestamp: '2018-12-05T12:34:32.00Z'
 };
-
-// StructuredValue
-var svValueJson = {
-    'aString': 'my string test',
-    'aBoolean': true,
-    'aNumber': 55,
-    'aStringNumber': '77',
-    'aJSON': {
-        'a1': 'example',
-        'a2': 23,
-        'a3': {
-            'aa1': 'the end'
-        }
-    }
-};
-var svValueArray = [1,'dos', '3', {}, [], [1,2,3], {'a': 1, 'b': '2'}];
-
-
-
 var action1 = {
-    'type': 'update',
-    'parameters': {
-        'id':'${id}_NGSIv2Test',
-        'type':'NGSIv2TypesTest',
-        'version': '2',
-        'attributes': [
+    type: 'update',
+    parameters: {
+        version: '2',
+        attributes: [
             {
-                'name':'streetLightID',
-                'type': 'Text',
-                'value': '${id}'
+                name: 'streetLightID',
+                type: 'Text',
+                value: '${id}'
             },
             {
-                'name':'illuminanceLevel',
-                'type': 'Number',
-                'value': '${ilumLevel}'
+                name: 'textNumberLit',
+                type: 'Text',
+                value: 666
             },
             {
-                'name':'lastchange',
-                'type': 'DateTime',
-                'value': '${lastchange}'
+                name: 'textBoolLit',
+                type: 'Text',
+                value: false
             },
             {
-                'name':'district',
-                'type': 'Text',
-                'value': '${areaServed}'
+                name: 'textObjLit',
+                type: 'Text',
+                value: { a: 1, b: 2 }
             },
             {
-                'name':'status',
-                'type': 'Text',
-                'value': '${laststatus}'
+                name: 'streetLightID',
+                type: 'Text',
+                value: '${id}'
             },
             {
-                'name':'address',
-                'type': 'Address',
-                'value': '${streetAddress} ${postalCode}, ${addressLocality}'
+                name: 'illuminanceLevel',
+                type: 'Number',
+                value: '${lastLightIllumNumber}'
             },
             {
-                'name':'powerState',
-                'type': 'Text',
-                'value': '${powerState}'
+                name: 'illuminanceLevel2',
+                type: 'Number',
+                value: '${lastLightIllumStringNumber}'
             },
             {
-                'name':'location',
-                'type': '${locationType}',
-                'value': '${fulllocation}'
+                name: 'illuminanceLevel3',
+                type: 'Number',
+                value: 12.5
             },
             {
-                'name': 'fulllatlongArray',
-                'type': 'StructuredValue',
-                'value': '${fulllatlongArray}'
+                name: 'lastchange',
+                type: 'DateTime',
+                value: '${stringDate}'
+            },
+            {
+                name: 'lastchange2',
+                type: 'DateTime',
+                value: '${stringDateMs}'
+            },
+            {
+                name: 'lastchange3',
+                type: 'DateTime',
+                value: '${numberDateMs}'
+            },
+            {
+                name: 'isBool1',
+                type: 'Boolean',
+                value: '${isconnected}',
+                metadata: metaExample
+            },
+            {
+                name: 'isBool2',
+                type: 'Boolean',
+                value: 'TRUE'
+            },
+            {
+                name: 'isBool3',
+                type: 'Boolean',
+                value: 'true'
+            },
+            {
+                name: 'isBool4',
+                type: 'Boolean',
+                value: 'False'
+            },
+            {
+                name: 'isBool5',
+                type: 'Boolean',
+                value: 'other'
+            },
+            {
+                name: 'isBool6',
+                type: 'Boolean',
+                value: true
+            },
+            {
+                name: 'isBool7',
+                type: 'Boolean',
+                value: false
+            },
+            {
+                name: 'district',
+                type: 'Text',
+                value: '${areaServed}'
+            },
+            {
+                name: 'status',
+                type: 'Text',
+                value: '${laststatus}'
+            },
+            {
+                name: 'address',
+                type: 'Address',
+                value: '${streetAddress}, ${addressLocality}'
+            },
+            {
+                name: 'powerState',
+                type: 'Text',
+                value: '${powerState}'
+            },
+            {
+                name: 'refNone',
+                type: '${refNoneType}',
+                value: 'futureNull'
+            },
+            {
+                name: 'refNone2',
+                type: '${refNoneType}',
+                value: '123'
+            },
+            {
+                name: 'refNone3',
+                type: '${refNoneType}',
+                value: null
             }
         ]
     }
 };
 var event1 = {
-    'ruleName': 'switch_on',
-    'id': 'AmbientLightSensor:1',
-    'stream_1': {
-        'lightEv': {
-            'underlying': {
-                'dateModified__minute': 31,
-                'powerState__type': 'Text',
-                'dateModified__hour': 12,
-                'illuminanceLevel': 80,
-                'type': 'Streetlight',
-                'isPattern': false,
-                'subservice': '/',
-                'address__addressCountry': 'Sweden',
-                'dateModified__year': 2018,
-                'dateModified__monthUTC': 12,
-                'dateModified__yearUTC': 2018,
-                'dateModified__type': 'DateTime',
-                'powerState': 'off',
-                'illuminanceLevel__metadata__TimeInstant__type': 'structuredValue',
-                'dateModified__dayUTC': 5,
-                'id': 'Streetlight:D0CF5EFFFE8A9019',
-                'dateModified__iso': '2018-12-05T11:31:39.00Z',
-                'dateModified__ts': 1544009499000,
-                'dateModified__millisecond': 0,
-                'status__type': 'Text',
-                'areaServed': 'Stockholm center',
-                'dateModified__second': 39,
-                'dateModified__hourUTC': 11,
-                'noticeTS': 1545091611401,
-                'dateModified__month': 12,
-                'noticeId': 'd1ef4f90-0258-11e9-990d-8f01eeb8de94',
-                'dateModified__millisecondUTC': 0,
-                'illuminanceLevel__type': 'Number',
-                'service': 'dev_capelon',
-                'address__addressLocality': 'Stockholm',
-                'dateModified__day': 5,
-                'address__streetAddress': 'Vasagatan 1',
-                'dateModified__secondUTC': 39,
-                'areaServed__type': 'Text',
-                'illuminanceLevel__metadata__TimeInstant__attr2': 69,
-                'address__type': 'PostalAddress',
-                'dateModified__minuteUTC': 31,
-                'illuminanceLevel__metadata__TimeInstant__attr1': 'a1',
-                'status': 'ok'
-            },
-            'eventType': {
-                'writeableProperties': [
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'service',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'id',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'type',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'subservice',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    }
-                ],
-                'metadata': {
-                    'propertyAgnostic': false,
-                    'applicationPreConfiguredStatic': false,
-                    'applicationConfigured': true,
-                    'publicName': 'iotEvent',
-                    'applicationPreConfigured': true,
-                    'typeClass': {
-                        'public': true
-                    },
-                    'primaryName': 'iotEvent',
-                    'optionalApplicationType': {}
-                },
-                'types': {
-                    'service': 'class java.lang.String',
-                    'id': 'class java.lang.String',
-                    'type': 'class java.lang.String',
-                    'subservice': 'class java.lang.String'
-                },
-                'eventTypeId': 1,
-                'deepSuperTypes': 'java.util.Collections$EmptyIterator@41526e22',
-                'reader': {},
-                'underlyingType': 'interface java.util.Map',
-                'propertyNames': [
-                    'service',
-                    'id',
-                    'type',
-                    'subservice'
-                ],
-                'name': 'iotEvent',
-                'propertyDescriptors': [
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'service',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'id',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'type',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'subservice',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    }
-                ]
-            },
-            'properties': {
-                'dateModified__minute': 31,
-                'powerState__type': 'Text',
-                'dateModified__hour': 12,
-                'illuminanceLevel': 80,
-                'type': 'Streetlight',
-                'isPattern': false,
-                'subservice': '/',
-                'address__addressCountry': 'Sweden',
-                'dateModified__year': 2018,
-                'dateModified__monthUTC': 12,
-                'dateModified__yearUTC': 2018,
-                'dateModified__type': 'DateTime',
-                'powerState': 'off',
-                'illuminanceLevel__metadata__TimeInstant__type': 'structuredValue',
-                'dateModified__dayUTC': 5,
-                'id': 'Streetlight:D0CF5EFFFE8A9019',
-                'dateModified__iso': '2018-12-05T11:31:39.00Z',
-                'dateModified__ts': 1544009499000,
-                'dateModified__millisecond': 0,
-                'status__type': 'Text',
-                'areaServed': 'Stockholm center',
-                'dateModified__second': 39,
-                'dateModified__hourUTC': 11,
-                'noticeTS': 1545091611401,
-                'dateModified__month': 12,
-                'noticeId': 'd1ef4f90-0258-11e9-990d-8f01eeb8de94',
-                'dateModified__millisecondUTC': 0,
-                'illuminanceLevel__type': 'Number',
-                'service': 'dev_capelon',
-                'address__addressLocality': 'Stockholm',
-                'dateModified__day': 5,
-                'address__streetAddress': 'Vasagatan 1',
-                'dateModified__secondUTC': 39,
-                'areaServed__type': 'Text',
-                'illuminanceLevel__metadata__TimeInstant__attr2': 69,
-                'address__type': 'PostalAddress',
-                'dateModified__minuteUTC': 31,
-                'illuminanceLevel__metadata__TimeInstant__attr1': 'a1',
-                'status': 'ok'
-            }
-        }
-    },
-    'stream_0': {
-        'ev': {
-            'underlying': {
-                'dateModified__minute': 31,
-                'dateModified__hour': 12,
-                'type': 'AmbientLightSensor',
-                'isPattern': false,
-                'subservice': '/',
-                'illuminance__type': 'Number',
-                'dateModified__year': 2018,
-                'dateModified__monthUTC': 12,
-                'dateModified__yearUTC': 2018,
-                'dateModified__type': 'DateTime',
-                'dateModified__dayUTC': 5,
-                'id': 'AmbientLightSensor:1',
-                'dateModified__iso': '2018-12-05T11:31:40.00Z',
-                'dateModified__ts': 1544009500000,
-                'dateModified__millisecond': 0,
-                'dateModified__second': 40,
-                'dateModified__hourUTC': 11,
-                'noticeTS': 1545091618126,
-                'dateModified__month': 12,
-                'noticeId': 'd5f176e0-0258-11e9-990d-8f01eeb8de94',
-                'dateModified__millisecondUTC': 0,
-                'illuminance': 12,
-                'service': 'dev_capelon',
-                'dateModified__day': 5,
-                'dateModified__secondUTC': 40,
-                'dateModified__minuteUTC': 31
-            },
-            'eventType': {
-                'writeableProperties': [
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'service',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'id',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'type',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'subservice',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    }
-                ],
-                'metadata': {
-                    'propertyAgnostic': false,
-                    'applicationPreConfiguredStatic': false,
-                    'applicationConfigured': true,
-                    'publicName': 'iotEvent',
-                    'applicationPreConfigured': true,
-                    'typeClass': {
-                        'public': true
-                    },
-                    'primaryName': 'iotEvent',
-                    'optionalApplicationType': {}
-                },
-                'types': {
-                    'service': 'class java.lang.String',
-                    'id': 'class java.lang.String',
-                    'type': 'class java.lang.String',
-                    'subservice': 'class java.lang.String'
-                },
-                'eventTypeId': 1,
-                'deepSuperTypes': 'java.util.Collections$EmptyIterator@41526e22',
-                'reader': {},
-                'underlyingType': 'interface java.util.Map',
-                'propertyNames': [
-                    'service',
-                    'id',
-                    'type',
-                    'subservice'
-                ],
-                'name': 'iotEvent',
-                'propertyDescriptors': [
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'service',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'id',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'type',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    },
-                    {
-                        'requiresMapkey': false,
-                        'requiresIndex': false,
-                        'fragment': false,
-                        'indexed': false,
-                        'propertyName': 'subservice',
-                        'propertyType': 'class java.lang.String',
-                        'mapped': false
-                    }
-                ]
-            },
-            'properties': {
-                'dateModified__minute': 31,
-                'dateModified__hour': 12,
-                'type': 'AmbientLightSensor',
-                'isPattern': false,
-                'subservice': '/',
-                'illuminance__type': 'Number',
-                'dateModified__year': 2018,
-                'dateModified__monthUTC': 12,
-                'dateModified__yearUTC': 2018,
-                'dateModified__type': 'DateTime',
-                'dateModified__dayUTC': 5,
-                'id': 'AmbientLightSensor:1',
-                'dateModified__iso': '2018-12-05T11:31:40.00Z',
-                'dateModified__ts': 1544009500000,
-                'dateModified__millisecond': 0,
-                'dateModified__second': 40,
-                'dateModified__hourUTC': 11,
-                'noticeTS': 1545091618126,
-                'dateModified__month': 12,
-                'noticeId': 'd5f176e0-0258-11e9-990d-8f01eeb8de94',
-                'dateModified__millisecondUTC': 0,
-                'illuminance': 12,
-                'service': 'dev_capelon',
-                'dateModified__day': 5,
-                'dateModified__secondUTC': 40,
-                'dateModified__minuteUTC': 31
-            }
-        }
-    },
-    'lastLightIllum': 80,
-    'subservice': '/',
-    'service': 'dev_capelon',
-    'fiwarePerseoContext': {
-        'path': '/actions/do',
-        'op': '/actions/do',
-        'comp': 'perseo-fe',
-        'trans': 'f8636710-5fc6-4070-9b1e-8d414fc6522a',
-        'corr': 'd5f0a9cc-0258-11e9-b678-0242ac160003; perseocep=15',
-        'srv': 'dev_capelon',
-        'subsrv': '/'
+    ruleName: 'switch_on',
+    id: 'AmbientLightSensor:1',
+    type: 'AmbientLightSensor',
+    lastLightIllumNumber: 80,
+    lastLightIllumStringNumber: '69',
+    isconnected: true,
+    streetAddress: 'Vasagatan 1',
+    addressLocality: 'Stockholm',
+    laststatus: 'allright',
+    powerState: 'on',
+    stringDate: '2018-12-05T11:31:39.00Z',
+    stringDateMs: '1548843060657',
+    numberDateMs: 1548843229832,
+    subservice: '/',
+    areaServed: 'Stockholm center',
+    service: 'dev_test',
+    refNoneType: 'None',
+    fiwarePerseoContext: {
+        path: '/actions/do',
+        op: '/actions/do',
+        comp: 'perseo-fe',
+        trans: 'f8636710-5fc6-4070-9b1e-8d414fc6522a',
+        corr: 'd5f0a9cc-0258-11e9-b678-0242ac160003; perseocep=15',
+        srv: 'dev_test',
+        subsrv: '/'
     }
 };
 
 var expectedChanges = {
-    'illuminanceLevel2': {
-        'value': {},
-        'type': 'Number'
+    address: {
+        value: 'Vasagatan 1, Stockholm',
+        type: 'Address'
     },
-    'lastLightIllum': {
-        'value': 80,
-        'type': 'Number'
+    status: {
+        value: 'allright',
+        type: 'Text'
     },
-    'id': 'AmbientLightSensor:1',
-    'type': '[?]'
+    textBoolLit: {
+        value: 'false',
+        type: 'Text'
+    },
+    textNumberLit: {
+        value: '666',
+        type: 'Text'
+    },
+    textObjLit: {
+        value: '[object Object]',
+        type: 'Text'
+    },
+    refNone: {
+        value: null,
+        type: 'None'
+    },
+    refNone2: {
+        value: null,
+        type: 'None'
+    },
+    refNone3: {
+        value: null,
+        type: 'None'
+    },
+    isBool1: {
+        value: true,
+        type: 'Boolean',
+        metadata: metaExample
+    },
+    isBool2: {
+        value: true,
+        type: 'Boolean'
+    },
+    isBool3: {
+        value: true,
+        type: 'Boolean'
+    },
+    isBool4: {
+        value: false,
+        type: 'Boolean'
+    },
+    isBool5: {
+        value: false,
+        type: 'Boolean'
+    },
+    isBool6: {
+        value: true,
+        type: 'Boolean'
+    },
+    isBool7: {
+        value: false,
+        type: 'Boolean'
+    },
+    powerState: {
+        value: 'on',
+        type: 'Text'
+    },
+    illuminanceLevel: {
+        value: 80,
+        type: 'Number'
+    },
+    illuminanceLevel2: {
+        value: 69,
+        type: 'Number'
+    },
+    illuminanceLevel3: {
+        value: 12.5,
+        type: 'Number'
+    },
+    streetLightID: {
+        value: 'AmbientLightSensor:1',
+        type: 'Text'
+    },
+    district: {
+        value: 'Stockholm center',
+        type: 'Text'
+    },
+    lastchange: {
+        value: '2018-12-05T11:31:39.000Z',
+        type: 'DateTime'
+    },
+    lastchange2: {
+        value: '2019-01-30T10:11:00.657Z',
+        type: 'DateTime'
+    },
+    lastchange3: {
+        value: '2019-01-30T10:13:49.832Z',
+        type: 'DateTime'
+    }
 };
 
 describe('doIt', function() {
+    describe('#NGSIv2 updateActions', function() {
+        beforeEach(function() {});
 
-    describe('#NGSIv2 simple updateAction', function() {
-        var v1notice, v2notice;
-
-        beforeEach(function () {
-            v1notice = JSON.parse(noticeExampleV1);
-            v2notice = JSON.parse(noticeExampleV2);
-        });
-
-        it('should accept NGSIv1 entities', function (done) {
-
+        it('should accept NGSIv2 entities', function(done) {
             // Mocks
-            var createEntityThen = sinon.spy(function (successCB, errorCB) {
-                setTimeout(function () {
-                    successCB({'httpCode': '200', 'message': 'all right'}); // success callback
+            var createEntityThen = sinon.spy(function(successCB, errorCB) {
+                setTimeout(function() {
+                    successCB({ httpCode: '200', message: 'all right' }); // success callback
                 }, 0);
                 return '__TEST';
             });
-            var createEntityMock = sinon.spy(
-                function (changes, options) {
-                    return {'then': createEntityThen};
-                }
-            );
-            var NGSICloseMock = sinon.spy(
-                function () {
-                    return 'closed';
-                }
-            );
-            var NGSIConnectionMock = sinon.spy(
-                function () {
-                    return {
-                        'v2': {'createEntity': createEntityMock},
-                        'close': NGSICloseMock
-                    };
-                }
-            );
+            var createEntityMock = sinon.spy(function(changes, options) {
+                return { then: createEntityThen };
+            });
+            var NGSICloseMock = sinon.spy(function() {
+                return 'closed';
+            });
+            var NGSIConnectionMock = sinon.spy(function() {
+                return {
+                    v2: { createEntity: createEntityMock },
+                    close: NGSICloseMock
+                };
+            });
 
             updateAction.__with__({
                 'NGSI.Connection': NGSIConnectionMock
-            })(function () {
-                var callback = function (e, request) {
+            })(function() {
+                var callback = function(e, request) {
                     should.exist(request);
-                    request.should.not.be.instanceof(Error);
+                    should.not.exist(e);
                     should.equal(request.httpCode, 200);
-                    createEntityMock.should.be.calledOnceWith(expectedChanges, {upsert: true});
+                    expectedChanges.id = 'AmbientLightSensor:1_NGSIv2Test';
+                    expectedChanges.type = 'NGSIv2TypesTest';
+                    createEntityMock.should.be.calledOnceWith(expectedChanges, { upsert: true });
                     done();
                 };
+                action1.parameters.id = '${id}_NGSIv2Test';
+                action1.parameters.type = 'NGSIv2TypesTest';
                 updateAction.doIt(action1, event1, callback);
             });
         });
 
+        it('should accept NGSIv2 entities without type and id', function(done) {
+            // Mocks
+            var createEntityThen = sinon.spy(function(successCB, errorCB) {
+                setTimeout(function() {
+                    successCB({ httpCode: '200', message: 'all right' }); // success callback
+                }, 0);
+                return '__TEST';
+            });
+            var createEntityMock = sinon.spy(function(changes, options) {
+                return { then: createEntityThen };
+            });
+            var NGSICloseMock = sinon.spy(function() {
+                return 'closed';
+            });
+            var NGSIConnectionMock = sinon.spy(function() {
+                return {
+                    v2: { createEntity: createEntityMock },
+                    close: NGSICloseMock
+                };
+            });
+
+            updateAction.__with__({
+                'NGSI.Connection': NGSIConnectionMock
+            })(function() {
+                var callback = function(e, request) {
+                    should.exist(request);
+                    should.not.exist(e);
+                    should.equal(request.httpCode, 200);
+                    expectedChanges.id = 'AmbientLightSensor:1';
+                    expectedChanges.type = 'AmbientLightSensor';
+                    createEntityMock.should.be.calledOnceWith(expectedChanges, { upsert: true });
+                    done();
+                };
+                delete action1.parameters.id;
+                delete action1.parameters.type;
+                updateAction.doIt(action1, event1, callback);
+            });
+        });
+
+        it('should control failed update actions', function(done) {
+            // Mocks
+            var theCBError = new Error();
+            var createEntityThen = sinon.spy(function(successCB, errorCB) {
+                setTimeout(function() {
+                    errorCB(theCBError); // success callback
+                }, 0);
+                return '__TEST';
+            });
+            var createEntityMock = sinon.spy(function(changes, options) {
+                return { then: createEntityThen };
+            });
+            var NGSICloseMock = sinon.spy(function() {
+                return 'closed';
+            });
+            var NGSIConnectionMock = sinon.spy(function() {
+                return {
+                    v2: { createEntity: createEntityMock },
+                    close: NGSICloseMock
+                };
+            });
+
+            updateAction.__with__({
+                'NGSI.Connection': NGSIConnectionMock
+            })(function() {
+                var callback = function(e, request) {
+                    should.not.exist(request);
+                    should.exist(e);
+                    e.should.be.instanceof(Error);
+                    expectedChanges.id = 'AmbientLightSensor:1_NGSIv2Test';
+                    expectedChanges.type = 'NGSIv2TypesTest';
+                    createEntityMock.should.be.calledOnceWith(expectedChanges, { upsert: true });
+                    done();
+                };
+                action1.parameters.id = '${id}_NGSIv2Test';
+                action1.parameters.type = 'NGSIv2TypesTest';
+                updateAction.doIt(action1, event1, callback);
+            });
+        });
     });
 });

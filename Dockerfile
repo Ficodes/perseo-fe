@@ -36,7 +36,6 @@ RUN \
 
 EXPOSE 9090
 
-# TODO check if this env vars are necessary
 ENV PERSEO_MONGO_HOST=mongodb
 ENV PERSEO_CORE_URL=http://corehost:8080
 
