@@ -21,10 +21,10 @@ The following table shows the environment variables available for Perseo configu
 | PERSEO_LOG_LEVEL          | Log level.         |
 | PERSEO_SMTP_HOST          | Host of the SMTP server |
 | PERSEO_SMTP_PORT          | Port of the SMTP server |
-| PERSEO_SMTP_VERIFY_CA     | `true` if self-signed or invalid TLS certificate should be rejected |
 | PERSEO_SMTP_SECURE        | `true` if SSL should be used with the SMTP server |
 | PERSEO_SMTP_AUTH_USER     | Authentication data, the username |
 | PERSEO_SMTP_AUTH_PASS     | Authentication data, the password for the user |
+| PERSEO_SMTP_TLS_REJECTUNAUTHORIZED     | Reject if unauthorized security is found (i.e. selfsigned certificates). Default is false. |
 | PERSEO_SMS_URL            | URL for sending SMSs (SMPP Adapter) |
 | PERSEO_SMS_API_KEY        | API KEY for sending SMSs, if necessary. Only for the SMPP Adapter simulator |
 | PERSEO_SMS_API_SECRET     | API SECRET for sending SMSs, if necessary. Only for the SMPP Adapter simulator |
@@ -47,9 +47,9 @@ In order to have perseo running, there are several basic pieces of information t
 * `config.smtp.port`: port for sending email.
 * `config.smtp.host`:  host for sending email.
 * `config.smtp.secure`:  defines if the connection should use SSL (if true) or not (if false).
-* `config.smtp.tls.rejectUnauthorized`:  defines if if self-signed or invalid TLS certificate should be rejected (if true) or not (if false).
 * `config.smtp.auth.user`:  authentication data, the username.
 * `config.smtp.auth.pass`:  authentication data, the password for the user.
+* `config.smtp.tls.rejectUnauthorized`: reject if unauthorized security is found (i.e. selfsigned certificates). Default is false.
 * `config.sms.URL`: URL for sending SMSs.
 * `config.sms.from`: Field `from` for the outgoing SMSs. Required by the SMPP Adapter.
 * `config.sms.API_KEY`: API KEY for sending SMSs, if necessary. Only for the SMPP Adapter simulator.
@@ -60,7 +60,7 @@ In order to have perseo running, there are several basic pieces of information t
 * `config.smpp.password`: Password for the user of the SMPP server
 * `config.smpp.from`: Number from SMS are sending by SMPP server
 * `config.smpp.enabled`: SMPP is default method for SMS instead of use SMS gateway.
-* `config.orion.URL`: Context Broker URL, e.g. https://orion.example.com
+* `config.orion.URL`: Context Broker base URL, e.g. https://orion.example.com:1026
 * `config.mongo.URL`: URL for connecting mongoDB.
 * `config.executionsTTL`: Time-To-Live for documents of action executions (seconds).
 * `config.checkDB.delay`:  Number of milliseconds to check DB connection (see [database aspects](admin.md#database-aspects) documentation for mode detail).

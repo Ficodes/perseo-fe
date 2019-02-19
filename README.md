@@ -79,6 +79,8 @@ This project is part of [FIWARE](https://fiware.org/) and has been rated as foll
 
 - Refer to the [Esper Reference Documentation](http://esper.espertech.com/release-6.1.0/esper-reference/html/index.html) for info on how to use EPL as a rule language.
 
+| :dart: [Roadmap](documentation/roadmap.md) |
+|---|
 ## License
 
 Perseo is licensed under [GNU Affero General Public License v3.0](./LICENSE).
